@@ -1,0 +1,131 @@
+@import partials/layout_mixin_and_properties
+
+body
+	position: relative
+	text-align: left
+
+#left_header_menu 
+	+column(15)
+	+horizontal_links
+
+#right_header_menu
+	+column(16)
+	+last
+	+horizontal_links("none")
+	text-align: right
+
+#page 
+	+container
+	z-index: 2
+
+#commons 
+	+column(20)
+	padding: 0
+		
+.logo
+	+column(3)
+	margin-top: $baseline_grid_size
+	
+.project_title
+	+column(17)
+	height: $baseline_grid_size*6
+	margin-top: $baseline_grid_size
+	
+.jisc_logo 
+	+column(11)
+	+last
+	margin-top: $baseline_grid_size
+
+.col_left
+	+column(10)
+
+.col_right
+	+column(10)
+	+last
+
+.col_left, .col_right
+	header
+		img
+			+column(2.5)
+		section
+			+column(7)		
+	article, footer
+		+column(10)
+			
+.sidebar 
+	+column(11)
+	+last
+
+footer
+	+column(31)
+
+.footer_info
+	+column(20)
+
+.footer_address 
+	+column(11)
+	+last
+
+//----
+.sidebar
+	.profiles 
+		ul  
+			display: block 
+			margin-left: -33px
+		li 
+			float: left
+			margin-left: -8px
+	.publicfeeds ul  
+		margin-top: 8em
+
+.notice 
+	margin: 0 4em 0 0
+	padding: 8px 40px
+	float: right 
+	width: 200px
+
+.notice_main
+	margin: 1em 0
+	padding: 8px 40px
+	width: 68%
+
+.horizontal_links_layout
+	+horizontal_links
+	
+#twitter_update_list		
+	li
+		margin: $baseline_grid_size 0
+		a
+			padding-left: 0
+			
+#twitter_div
+	a
+		padding-left: 3.333em
+
+//form .fields p { position: relative; margin: 0 0 1em 30%; padding: 0; clear: both; line-height: 1.2em;}
+//form .actions { text-align: left;}
+	
+.cols-2	
+	overflow: auto
+	+horizontal_links
+			
+.heading-explanatory
+	padding: 0 0 0 5px
+
+input
+	padding: 4px
+
+.button
+	padding: 5px 10px 6px 10px
+	
+.info_pane
+	padding: 1em
+	margin: 0
+
+.content_area
+	padding: 1em
+	margin-bottom: 1em
+
+//#twitter_update_list li { margin-bottom: 1em; }
+//#twitter_update_list span { display:block; }
+//#twitter-link { margin-left:2.3em; }

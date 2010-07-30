@@ -1,0 +1,19 @@
+$blueprint_grid_width: 16px
+$blueprint_grid_margin: 16px
+$blueprint_grid_columns: 31
+$baseline_grid_size: 16px
+
+@import blueprint
+
+=horizontal_links($direction: left)
+	padding: $baseline_grid_size/2 0 $baseline_grid_size/2 0
+	ul
+		margin: 0
+		padding: 0 0 0 $baseline_grid_size
+		
+	li 	
+		float: $direction
+		display: inline
+		margin-right: 0.5em
+		padding-right: 0.5em
+		text-align: center
