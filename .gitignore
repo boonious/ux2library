@@ -1,0 +1,11 @@
+.DS_Store
+.svn
+db/*.sqlite3
+db/schema.rb
+jetty/logs/*.log
+jetty/solr/data/*
+log/*
+config/SolrMarc/*.log*
+tmp/
+*.log
+
