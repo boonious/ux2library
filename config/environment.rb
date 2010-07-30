@@ -10,6 +10,9 @@ require File.join(File.dirname(__FILE__), '../vendor/plugins/blacklight/vendor/p
 Rails::Initializer.run do |config|
   config.plugin_paths += ["#{RAILS_ROOT}/vendor/plugins/blacklight/vendor/plugins"]
   config.gem 'authlogic', :version => '2.1.2'
+  config.gem 'haml'
+  config.gem "boonious-compass", :lib => 'compass', :version => ">= 0.10.2"
+    
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
@@ -42,3 +45,6 @@ Rails::Initializer.run do |config|
   # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}')]
   # config.i18n.default_locale = :de
 end
+
+Haml::Template.options[:format] = :html5
+Sass::Plugin.options[:style] = :compact

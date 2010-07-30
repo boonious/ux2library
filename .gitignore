@@ -9,3 +9,8 @@ config/SolrMarc/*.log*
 tmp/
 *.log
 
+public/stylesheets/ie.css
+public/stylesheets/layout.css
+public/stylesheets/print.css
+public/stylesheets/screen.css
+public/stylesheets/surface.css
