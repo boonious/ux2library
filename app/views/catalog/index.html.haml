@@ -1,0 +1,26 @@
+-if params[:q].blank? and params[:f].blank? and params[:search_field].blank?
+	-# if there are no input/search related params, display the "home" partial
+	= render 'home'
+-else
+	%section#commons
+		- @page_title = application_name + " Search Results"
+		= render :partial => 'search_form'
+		= render 'constraints', :localized_params=>params
+	
+		%section.pagination
+			%h5 Results navigation
+			= will_paginate @response.docs, :page_links => false, :class => 'prev_next_links'
+			= will_paginate @response.docs, :container => false
+	
+		= render 'sort_and_per_page'
+		= render :partial=>'document_list'
+		
+		%section.pagination
+			= will_paginate @response.docs, :page_links => false, :class => 'prev_next_links'
+			= will_paginate @response.docs, :container => false
+		
+		= render :partial=>'solr_request'
+		
+	%aside.sidebar
+		= render :partial=>'home_text'
+		= render :partial=>'facets'
