@@ -1,8 +1,9 @@
 @import partials/surface_mixin_and_properties
+@import surface_digital_library
 
 body
 	+blueprint-typography(true)
-	//background: url(../images/grid.png)
+	background: url(../images/grid.png)
 	header.masthead
 		margin: 0
 		nav
@@ -11,24 +12,20 @@ body
 			+link-colors(#fff)
 	h5
 		color: $dark_highlight
-		
-#header_options, .cols-2
-	+links_with_divide
+	+hr
 	
 h1, h2, h3, h4, h5
 	font-family: Georgia, Times New Roman, Times, serif
 
-hr 	
-	border-top: 0 
-	border-left: 0 
-	border-right: 0 
-	margin-top: $baseline_grid_size - $baseline_grid_size/2
-	margin-bottom: 0
-	border-bottom:
-		width: $baseline_grid_size/2
+input
+	font-size: $large_text_font_size
+	background-color: $bright_foreground
+	padding: $baseline_grid_size/4
+	border:
+		width: 1px
 		style: solid
-		color: $bright_highlight
-	
+		color: $quiet_color
+
 .project_title
 	h3:first-child
 		padding-top: $baseline_grid_size/2
@@ -46,6 +43,19 @@ hr
 		margin: 0
 	h6
 		margin: 0
+
+.button
+	padding: $baseline_grid_size/4 1em
+	color: $bright_foreground
+	background-color: $dark_highlight
+	text-decoration: none
+	text-shadow: 0 -1px 5px rgba(0,0,0,0.25)
+	border: 1px solid rgba(0,0,0,0.25)
+	-moz-border-radius: 5px
+	-webkit-border-radius: 5px
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5)
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5)
+	cursor: pointer
 
 .sidebar 
 	font-size: 88%
@@ -67,31 +77,22 @@ footer
 	text-align: left
 			
 //-- to be refactored
+
+#header_options, .cols-2
+	+links_with_divide
+			
 fieldset
 	border: none
 	
 .block
 	display: block
-
-input
-	font-size: $large_text_font_size
-	background-color: $bright_foreground
-	border:
-		width: 1px
-		style: solid
-		color: $dull_foreground
 				
 .wide
 	width: 88%
 	
-.notice
+.notice, .notice_main
 	+bright_round_notice_area
 
-.notice_main
-	+bright_round_notice_area
-	a
-		+dark_hyperlink_low_contrast
-		
 .sidebar .profiles 
 
 p.meta 
@@ -112,20 +113,6 @@ p.meta
 	
 	&:hover
 		border-bottom: none
-		
-.button
-	padding: 0.5em 1em
-	color: $bright_foreground
-	background-color: $dark_highlight
-	font-size: 110%
-	text-decoration: none
-	text-shadow: 0 -1px 5px rgba(0,0,0,0.25)
-	border: 1px solid rgba(0,0,0,0.25)
-	-moz-border-radius: 5px
-	-webkit-border-radius: 5px
-	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5)
-	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5)
-	cursor: pointer
 
 .red
 	background-color: $red

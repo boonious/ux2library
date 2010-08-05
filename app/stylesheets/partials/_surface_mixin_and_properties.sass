@@ -8,6 +8,7 @@ $baseline_grid_size: 16px
 $font-color: #333
 $link-color: #046704
 $link-visited-color: #046704
+$quiet-color: #777
 
 // other customisable colour propertiese
 	$quiet-color:
@@ -58,23 +59,17 @@ $heading_font_size_difference: 5px
 $large_text_font_size: 16px
 $text_font_size_difference: 2px
 
-=links_with_divide
-	ul
-		margin: 0
-		
-	li 
-		border-right: 
-			width: 1px
-			style: solid 
-			color: $dark_highlight
-
-		&.on a
-			background: #111
-			color: $bright_highlight
-
-		&.last 
-			border-right: none
-			padding-right: 0px
+=hr($color: $bright_highlight)
+	hr 	
+		border-top: 0 
+		border-left: 0 
+		border-right: 0 
+		margin-top: $baseline_grid_size - $baseline_grid_size/2
+		margin-bottom: 0
+		border-bottom:
+			width: $baseline_grid_size/2
+			style: solid
+			color: $color
 			
 =bright_round_notice_area($color: $dark_highlight, $background: $bright_highlight, $top_left_corner: 6px, $top_right_corner: 6px, $bottom_right_corner: 6px, $bottom_left_corner: 6px)
 	color: $color
@@ -93,27 +88,23 @@ $text_font_size_difference: 2px
 	-moz-border-bottom-right-radius: $bottom_right_corner
 	h3
 		color: $color
-
-=bright_hyperlink_low_contrast
-	border: none
-	// border-bottom:
-		size: 1px 
-		style: dotted 
-		color = $light_highlight
-	color: $light_highlight
-
-	&:hover
-		color: $bright_highlight
-
-=dark_hyperlink_low_contrast
-	text-decoration: none
-	border-bottom:
-		color: $main_foreground_colour
-		width: 1px
-		style: dotted
-	&:hover
-		color: $dark_highlight
-		border-bottom:
-			color: $dark_highlight
+		
+//-- to be refactored
+=links_with_divide
+	ul
+		margin: 0
+		
+	li 
+		border-right: 
 			width: 1px
-			style: dotted
+			style: solid 
+			color: $dark_highlight
+
+		&.on a
+			background: #111
+			color: $bright_highlight
+
+		&.last 
+			border-right: none
+			padding-right: 0px
+			

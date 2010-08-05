@@ -1,4 +1,6 @@
 @import partials/layout_mixin_and_properties
+@import layout_digital_library
+
 
 body
 	position: relative
@@ -51,10 +53,11 @@ body
 			+column(7)		
 	article, footer
 		+column(10)
-			
+							
 .sidebar 
 	+column(11)
 	+last
+
 
 footer
 	+column(31)
@@ -112,11 +115,6 @@ footer
 .heading-explanatory
 	padding: 0 0 0 5px
 
-input
-	padding: 4px
-
-.button
-	padding: 5px 10px 6px 10px
 	
 .info_pane
 	padding: 1em
