@@ -37,6 +37,37 @@ module ApplicationHelper
     ' [' + link_to("remove", catalog_index_path + remove_facet_params(unique_facet_field, item.value, params_for_ui), :class=>"remove") + ']'
   end
   
+  # cf. Blacklight, add facet params to Dictionary Hash instead (preserving KV entry order)
+  # also encodes the key for breadcrumb purposes
+  def add_facet_params(field, value)
+    p = params_for_ui
+    p[:f]||= Dictionary.new
+    encoded_facet_name = encode_facet_name(field, p[:f].size + 1)
+    p[:f][encoded_facet_name.to_sym] = value
+    p
+  end
+
+  # cf. Blacklight, add facet params to Dictionary Hash instead (preserving KV entry order)
+  # render the Dictionary Hash in a request URI string according to faceting parameter orders
+  # in the hash
+  def add_facet_params_and_redirect(field, value)
+    new_params = add_facet_params(field, value)
+
+    # Delete page, if needed. 
+    new_params.delete(:page)
+
+    # Delete any request params from facet-specific action, needed
+    # to redir to index action properly. 
+    Blacklight::Solr::FacetPaginator.request_keys.values.each do |paginator_key| 
+      new_params.delete(paginator_key)
+    end
+    new_params.delete(:id)
+
+    # Force action to be index. 
+    new_params[:action] = "index"
+    params_for_url new_params[:f]
+  end
+  
   # Method overrides w.r.t Blacklight plugin render_constraints_helper----------------------------------------------
   
   # cf. Blacklight, instead of Named Route + Hash rendering of the 
