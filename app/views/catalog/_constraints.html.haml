@@ -1,0 +1,11 @@
+= render_constraints(params)
+%hr
+-if params[:action] == 'index'
+	%p= page_entries_info @response.docs, :entry_name=>'item'
+- else
+	%p
+		Showing 
+		= session[:search][:counter].to_i
+		of
+		= format_num(session[:search][:total])
+		items from your search.
