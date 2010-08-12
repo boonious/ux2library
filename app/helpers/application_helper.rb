@@ -5,36 +5,59 @@ require 'facets/dictionary'
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   
-  # Method overrides w.r.t Blacklight plugin application_helper--------------------
+  # Method overrides w.r.t Blacklight plugin application_helper-----------------------------------------------------
   
   # cf. Blacklight, add span to display the item hits differently
   def render_facet_value(facet_solr_field, item, options ={})
     facet_number_tag =  content_tag(:span, format_num(item.hits), :class => "facet_number")
     link_to_unless(options[:suppress_link], item.value, add_facet_params_and_redirect(facet_solr_field, item.value), :class=>"facet_select") + facet_number_tag
   end
-  
-  
-  # Method overrides w.r.t Blacklight plugin render_constraints_helper--------------------
-  
-  # placeholder method override, to prevent exception
-  # currently 'remove_facet_params' doesn't work due to the use of Dictionary hash
-  # - simple makes :remove call 'string'
-  def render_constraints_filters(localized_params = params)
-     return "" unless localized_params[:f]
-     content = ""
-     localized_params[:f].each_pair do |facet,values|
-        values.each do |val|
-           content << render_constraint_element( facet_field_labels[facet],
-                  val, 
-                  :remove => "catalog_index_path(remove_facet_params(facet, val, localized_params))",
-                  :classes => ["filter"] 
-                ) + "\n"                 					            
-				end
-     end 
-     return content    
+
+  # cf. Blacklight, remove facet from Dictionary hash in an orderly fashion
+  # from both the breadcrumb trail and the faceting area
+  # 'encoded_facet_name' is a unique facet key with '_interaction_x' encoded in the params_for_ui method
+  # 'x' is the current position (selection history) of a breadcrumb navigation (0...N)
+  # e.g. p[:f] = {:subject_facet_interaction_0 => "physics",:subject_facet_interaction_1 => "maths" }
+  def remove_facet_params(encoded_facet_name, value, localized_params=params)  
+    p = localized_params.dup
+    p[:f] = p[:f].dup
+    p[:f].delete(encoded_facet_name) 
+    # construct a request URL with the orderly Hash
+    params_for_url p[:f]
   end
   
-  # New helper methos w.r.t to Blacklight ------------------
+  # cf. Blacklight, 'remove' link refers to the overriden remove_facet_params which
+  # returns an orderly request string (based on Dictionary Hash) to provide orderly
+  # removal of an existing facet
+  def render_selected_facet_value(facet_solr_field, item)
+    unique_facet_field = params_for_ui[:f].select { |k,v| k.to_s.include?(facet_solr_field) and CGI::unescape(v)==item.value }[0][0]
+    '<span class="selected">' +
+    render_facet_value(facet_solr_field, item, :suppress_link => true) +
+    '</span>' +
+    ' [' + link_to("remove", catalog_index_path + remove_facet_params(unique_facet_field, item.value, params_for_ui), :class=>"remove") + ']'
+  end
+  
+  # Method overrides w.r.t Blacklight plugin render_constraints_helper----------------------------------------------
+  
+  # cf. Blacklight, instead of Named Route + Hash rendering of the 
+  # :remove is constructed from scratch from the Dictionary Hash (orderly parameters)
+  # so that the rendered URL preserve the existing faceting (constraint) order 
+  def render_constraints_filters(localized_params = params)
+    return "" unless localized_params[:f]
+    content = ""
+    localized_params[:f].each_pair do |facet,values|        
+       values.each do |val|
+          content << render_constraint_element( facet_field_labels[facet],
+                 val,
+                 :remove => catalog_index_path + remove_facet_params(facet, val, localized_params),
+                 :classes => ["filter"] 
+               ) + "\n"                 					            
+ 			end
+    end 
+    return content    
+  end
+  
+  # New helper methos w.r.t to Blacklight --------------------------------------------------------------------------
   
   # returns a Dictionary (http://facets.rubyforge.org/apidoc/api/more/classes/Dictionary.html) Hash 
   # which preserve the order of faceting key-value URL parameters. Note: currently testing faceting
@@ -58,11 +81,29 @@ module ApplicationHelper
     order_encode_parameters
   end
   
+  # given a Dictionary Hash with orderly faceting parameters (constraints)
+  # construct a URL request string reflecting the order of the hash, e.g. 
+  # from {:subject_facet_interaction_0 => "physics",:subject_facet_interaction_1 => "maths" }
+  # to "?f[:subject_facet][]=physics&f[:subject_facet][]=maths"
+  def params_for_url(localized_params=params)    
+    url_queries = "?"
+    localized_params.each { |item|
+      facet_name = decode_facet_name(item[0])
+      url_queries = url_queries + "f"+ CGI::escape("["+facet_name+"][]")+"="+item[1] + "&"
+    }
+    url_queries.chomp("&")
+  end
+  
   # e.g. encodes {:subject_facet => [physics, maths] } into
   # :subject_facet_interaction_0 => "physics",:subject_facet_interaction_1 => "maths"
   # for the purposes of breadcrumbs trails
   def encode_facet_name(facet_name,index)
     facet_name + "_interaction_" + index.to_s
+  end
+  
+  # e.g. decodes :subject_facet_interaction_0 into :subject_facet
+  def decode_facet_name(encoded_facet_name)
+    encoded_facet_name.to_s.split('_interaction_')[0]
   end
   
 end
