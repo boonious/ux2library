@@ -1,7 +1,7 @@
 >
 %span.appliedFilter.constraint{ :class => options[:classes]}
 	- unless value.blank?
-		%span.filterValue= options[:escape_value] ? h(value) : value
+		%span.filterValue= options[:escape_value] ? link_to(h(value), options[:breadcrumb]) : link_to(value, options[:breadcrumb])
 	- unless label.blank?
 		%span.filterName
 			= options[:escape_label] ? "[" + h(label) + "]": "[" + label + "]"
