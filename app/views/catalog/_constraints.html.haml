@@ -1,4 +1,7 @@
-= render_constraints(params)
+-# cf. Blacklight, instead using 'params' directly, make use of the 'params_for_ui' helper
+-# which preserves the order of key-value pairs in request URL - in preparation for
+-# breadcrumb navigation. NOTE: for faceting breadcrumb only (no keyword search)
+= render_constraints(params_for_ui)
 %hr
 -if params[:action] == 'index'
 	%p= page_entries_info @response.docs, :entry_name=>'item'
