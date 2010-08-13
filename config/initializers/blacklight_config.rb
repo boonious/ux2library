@@ -24,29 +24,7 @@ Blacklight.configure(:shared) do |config|
   SolrDocument.use_extension( Blacklight::Solr::Document::Marc) do |document|
     document.key?( :marc_display  )
   end
-
-  
-  # default params for the SolrDocument.search method
-  SolrDocument.default_params[:search] = {
-    :qt=>:search,
-    :per_page => 10,
-    :facets => {:fields=>
-      ["format",
-        "language_facet",
-        "lc_1letter_facet",
-        "lc_alpha_facet",
-        "lc_b4cutter_facet",
-        "language_facet",
-        "pub_date",
-        "subject_era_facet",
-        "subject_geo_facet",
-        "subject_topic_facet"]
-    }  
-  }
-  
-  # default params for the SolrDocument.find_by_id method
-  SolrDocument.default_params[:find_by_id] = {:qt => :document}
-
+    
   # Semantic mappings of solr stored fields. Fields may be multi or
   # single valued. See Blacklight::Solr::Document::ExtendableClassMethods#field_semantics
   # and Blacklight::Solr::Document#to_semantic_values
@@ -58,9 +36,13 @@ Blacklight.configure(:shared) do |config|
         
   
   ##############################
+
+  config[:default_solr_params] = {
+    :qt => "search",
+    :per_page => 10 
+  }
   
   
-  config[:default_qt] = "search"
   
 
   # solr field values given special treatment in the show (single result) view
@@ -73,7 +55,6 @@ Blacklight.configure(:shared) do |config|
   # solr fld values given special treatment in the index (search results) view
   config[:index] = {
     :show_link => "title_display",
-    :num_per_page => 10,
     :record_display_type => "format"
   }
 
@@ -83,7 +64,7 @@ Blacklight.configure(:shared) do |config|
   # for human reading/writing, kind of like search_fields. Eg,
   # config[:facet] << {:field_name => "format", :label => "Format", :limit => 10}
   config[:facet] = {
-    :field_names => [
+    :field_names => (facet_fields = [
       "library_facet",
       "format",
       "pub_date",
@@ -93,7 +74,7 @@ Blacklight.configure(:shared) do |config|
      # "lc_1letter_facet",
      # "subject_geo_facet",
      # "subject_era_facet"
-    ],
+    ]),
     :labels => {
       "library_facet"       => "Library",
       "format"              => "Format",
@@ -116,6 +97,12 @@ Blacklight.configure(:shared) do |config|
       "subject_facet" => 20
     }
   }
+
+  # Have BL send all facet field names to Solr, which has been the default
+  # previously. Simply remove these lines if you'd rather use Solr request
+  # handler defaults, or have no facets.
+  config[:default_solr_params] ||= {}
+  config[:default_solr_params][:"facet.field"] = facet_fields
 
   # solr fields to be displayed in the index (search results) view
   #   The ordering of the field names is the order of the display 
@@ -190,10 +177,10 @@ Blacklight.configure(:shared) do |config|
   # with :solr_parameters and :solr_local_parameters (the latter for $param
   # solr LocalParams that can reference other params). 
   config[:search_fields] ||= []
-  config[:search_fields] << {:display_label => 'All Fields', :qt => 'search'}
-  config[:search_fields] << {:display_label => 'Title', :qt => 'title_search'}
-  config[:search_fields] << {:display_label =>'Author', :qt => 'author_search'}
-  config[:search_fields] << {:display_label => 'Subject', :qt=> 'subject_search'}
+  config[:search_fields] << {:key => "all_fields",  :display_label => 'All Fields', :qt => 'search'}
+  config[:search_fields] << {:key => 'title', :qt => 'title_search'}
+  config[:search_fields] << {:key =>'author', :qt => 'author_search'}
+  config[:search_fields] << {:key => 'subject', :qt=> 'subject_search'}
   
   # "sort results by" select (pulldown)
   # label in pulldown is followed by the name of the SOLR field to sort by and

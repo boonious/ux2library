@@ -23,10 +23,17 @@ jQuery(document).ready(function($) {
       // Make next/prev/sort links load ajaxy
       dialog.find("a.next_page, a.prev_page, a.sort_change").click( function() {     
           $("body").css("cursor", "progress");
+          dialog.find("ul.facet_extended_list").animate({opacity: 0});
           dialog.load( this.href, 
-              function() {  
+              function() {
                 addBehaviorToMoreFacetDialog(dialog);
-                $("body").css("cursor", "auto");                
+                $("body").css("cursor", "auto");
+                // Remove first header from loaded content, and make it a dialog
+                // title instead
+                var heading = dialog.find("h1, h2, h3, h4, h5, h6").eq(0).remove();
+                if (heading.size() > 0 ) {
+                  dialog.dialog("option", "title", heading.text());
+                }
               }
           );
           //don't follow original href
