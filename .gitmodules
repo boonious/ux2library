@@ -7,3 +7,6 @@
 [submodule "jetty"]
 	path = jetty
 	url = http://github.com/projectblacklight/blacklight-jetty.git
+[submodule "vendor/plugins/will_paginate"]
+	path = vendor/plugins/will_paginate
+	url = git@github.com:boonious/will_paginate.git
