@@ -14,13 +14,13 @@ module ApplicationHelper
 
   # cf. Blacklight, remove facet from Dictionary Hash which preserves URL parameters ordering
   # for both the breadcrumb trail and the faceting area
-  # 'encoded_facet_name' is a unique facet key (appended with '_interaction_x') encoded in params_for_ui
+  # 'encoded_key' is a unique facet key (appended with '_interaction_x') encoded in params_for_ui
   # 'x' is the current position (selection history) for a breadcrumb navigation (0...N)
   # e.g. p[:f] = {:subject_facet_interaction_0 => "physics",:subject_facet_interaction_1 => "maths" }
-  def remove_facet_params(encoded_facet_name, value, localized_params=params)  
+  def remove_facet_params(encoded_key, value, localized_params=params)
     p = localized_params.dup
     p[:f] = p[:f].dup
-    p[:f].delete(encoded_facet_name) 
+    p[:f].delete(encoded_key)
     # construct a request URL from the orderly Hash
     params_for_url (p[:q].empty? ? p[:f] :  p[:q].merge(p[:f]))
   end
@@ -73,13 +73,14 @@ module ApplicationHelper
   def render_constraints_query(localized_params = params)
     content = ""
     if (!localized_params[:q].blank?)
-      localized_params[:q].each_pair do |query, value|
-        if query.to_s.include?("q" + encoding_token)
-          corresponding_search_field_key = ("search_field" + encoding_token +  index_from_encoded_key(query)).to_sym
+      localized_params[:q].each_pair do |query_key, value|
+        if query_key.to_s.include?("q" + encoding_token)
+          corresponding_search_field_key = ("search_field" + encoding_token +  index_from_encoded_key(query_key)).to_sym
           corresponding_search_field_value = localized_params[:q][corresponding_search_field_key]
           content << render_constraint_element(corresponding_search_field_value, decode_breadcrumb_key_for_name(value),
                   :classes => ["query"],
-                  :remove => catalog_index_path(localized_params.merge(:q=>nil, :action=>'index')))
+                  :breadcrumb => catalog_index_path + create_breadcrumb_url(query_key, corresponding_search_field_key, localized_params),
+                  :remove => catalog_index_path + remove_query_params(query_key, corresponding_search_field_key, localized_params))
         end
       end
       return content
@@ -105,7 +106,7 @@ module ApplicationHelper
     return content    
   end
   
-  # New helper methos w.r.t to Blacklight --------------------------------------------------------------------------
+  # New helper methods w.r.t to Blacklight --------------------------------------------------------------------------
   
   # returns a Dictionary Hash (http://facets.rubyforge.org/apidoc/api/more/classes/Dictionary.html)
   # which preserve the order of query and facet key-value URL parameters.
@@ -128,6 +129,19 @@ module ApplicationHelper
     order_encode_parameters
   end
   
+  # remove query from the Dictionary Hash which preserves URL parameters ordering
+  # 'encoded_key' is a unique query key (appended with '_interaction_x') encoded in params_for_ui
+  # 'x' is the current position (selection history) for a breadcrumb navigation (0...N)
+  # 'x' is used for future purposes when multiple keyword searches will be accepted
+   def remove_query_params(encoded_q_key, encoded_search_field_key, localized_params=params)
+     p = localized_params.dup
+     p[:q] = p[:q].dup
+     p[:q].delete(encoded_q_key)
+     p[:q].delete(encoded_search_field_key)
+     # construct a request URL from the orderly Hash
+     params_for_url (p[:f].empty? ? p[:q] :  p[:q].merge(p[:f]))
+   end
+
   # construct a Dictionary Hash of query parameters from the request URL,
   # also encodes the facet name for breadcrumb navigation
   def order_encode_query_params
@@ -190,15 +204,22 @@ module ApplicationHelper
     encoded_query_or_facet_key.to_s.split(encoding_token)[1]
   end
   
-  def create_breadcrumb_url(encoded_facet_name, value, localized_params=params)  
-    current_position = breadcrumb_position encoded_facet_name
+  def create_breadcrumb_url(encoded_key, value, localized_params=params)  
+    current_position = breadcrumb_position encoded_key
     p = localized_params.dup
-    p[:f] = p[:f].dup.merge(p[:q])
-    params_for_url p[:f].select { |k,v|  breadcrumb_position(k) <= current_position }
+    if encoded_key.to_s.include?("q"+encoding_token)
+      p[:q] = p[:q].dup.merge(p[:f])
+      logger.info "p[:q]...." + p[:q].inspect
+      params_for_url p[:q].select { |k,v|  breadcrumb_position(k) <= current_position }
+    else
+      p[:f] = p[:f].dup.merge(p[:q])
+      logger.info "p[:f] ...." + p[:f].inspect
+      params_for_url p[:f].select { |k,v|  breadcrumb_position(k) <= current_position }
+    end
   end
   
-  def breadcrumb_position(encoded_facet_name)
-    encoded_facet_name.to_s.split(encoding_token)[1]
+  def breadcrumb_position(encoded_key)
+    encoded_key.to_s.split(encoding_token)[1]
   end
   
 end
