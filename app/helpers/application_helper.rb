@@ -193,7 +193,7 @@ module ApplicationHelper
   def create_breadcrumb_url(encoded_facet_name, value, localized_params=params)  
     current_position = breadcrumb_position encoded_facet_name
     p = localized_params.dup
-    p[:f] = p[:f].dup
+    p[:f] = p[:f].dup.merge(p[:q])
     params_for_url p[:f].select { |k,v|  breadcrumb_position(k) <= current_position }
   end
   
