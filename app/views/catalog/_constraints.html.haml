@@ -6,9 +6,10 @@
 	%p
 		%strong= "Keywords "
 		= render_constraints_query(params_for_ui)
-%p
-	%strong= "Scope "
-	= render_constraints_filters(params_for_ui)
+-if !params_for_ui[:f].empty?	
+	%p
+		%strong= "Scope "
+		= render_constraints_filters(params_for_ui)
 %hr
 -if params[:action] == 'index'
 	%p= page_entries_info @response.docs, :entry_name=>'item'

@@ -22,7 +22,7 @@ module ApplicationHelper
     p[:f] = p[:f].dup
     p[:f].delete(encoded_facet_name) 
     # construct a request URL from the orderly Hash
-    params_for_url p[:f]
+    params_for_url (p[:q].empty? ? p[:f] :  p[:q].merge(p[:f]))
   end
   
   # cf. Blacklight, 'remove' link refers to the overriden remove_facet_params which
