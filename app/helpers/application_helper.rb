@@ -41,7 +41,7 @@ module ApplicationHelper
   def add_facet_params(field, value)
     p = params_for_ui
     p[:f]||= Dictionary.new
-    encoded_facet_name = encode_facet_name(field, p[:f].size + 1)
+    encoded_facet_name = encode_facet_name_as_key(field, p[:f].size + 1)
     p[:f][encoded_facet_name.to_sym] = value
     p
   end
@@ -94,8 +94,12 @@ module ApplicationHelper
   # returns a Dictionary Hash (http://facets.rubyforge.org/apidoc/api/more/classes/Dictionary.html)
   # which preserve the order of faceting key-value URL parameters. Note: currently testing faceting
   # navigation only
+  def encoding_token_for_breadcrumb_position
+    '_interaction_'
+  end
+
   def params_for_ui
-    {:f => order_encode_facet_params }
+    {:q => order_encode_query_params, :f => order_encode_facet_params }
   end
   
   # construct a Dictionary Hash of faceting parameters from the request URL,
@@ -106,13 +110,27 @@ module ApplicationHelper
     facets_string_array = request.query_string.split('&').select { |i| i[0..0].include?("f")}
     facets_string_array.each_with_index { |f, index|
       # extract encode facet name (getting rids of "[","]" char from URL)
-      encoded_facet_name = encode_facet_name(f.split('=')[0][1..-1].gsub(/%5D|%5B/,''), index)
+      encoded_facet_name = encode_facet_name_as_key(f.split('=')[0][1..-1].gsub(/%5D|%5B/,''), index)
       facet_value = f.split('=')[1]
       order_encode_parameters[encoded_facet_name.to_sym]= CGI::unescape(facet_value)
     }
     order_encode_parameters
   end
   
+  # construct a Dictionary Hash of query parameters from the request URL,
+  # also encodes the facet name for breadcrumb navigation
+  def order_encode_query_params
+    order_encode_parameters = Dictionary.new
+    # split and extract facet parameters from the request uri (currently testing faceting only)
+    query_string_array = request.query_string.split('&').select { |i| i[0..0].include?("q") or i.include?("search_field")}
+    query_string_array.each_with_index { |f, index|
+      key = encode_query_name(f.split('=')[0], index)
+      value = f.split('=')[1]
+      order_encode_parameters[key.to_sym]= CGI::unescape(value)
+    }
+    order_encode_parameters
+  end
+
   # given a Dictionary Hash with orderly faceting parameters (constraints)
   # construct a URL request string reflecting the order of the hash, e.g. 
   # from {:subject_facet_interaction_0 => "physics",:subject_facet_interaction_1 => "maths" }
@@ -129,13 +147,20 @@ module ApplicationHelper
   # e.g. encodes {:subject_facet => [physics, maths] } into
   # :subject_facet_interaction_0 => "physics",:subject_facet_interaction_1 => "maths"
   # for breadcrumbs navigation
-  def encode_facet_name(facet_name,index)
-    facet_name + "_interaction_" + index.to_s
+  def encode_facet_name_as_key(facet_name,index)
+    facet_name + encoding_token_for_breadcrumb_position + index.to_s
   end
   
+  # e.g. encodes {:subject_facet => [physics, maths] } into
+  # :subject_facet_interaction_0 => "physics",:subject_facet_interaction_1 => "maths"
+  # for breadcrumbs navigation
+  def encode_query_name(query_name,index)
+    query_name + encoding_token_for_breadcrumb_position + index.to_s
+  end
+
   # e.g. decodes :subject_facet_interaction_0 into :subject_facet
   def decode_facet_name(encoded_facet_name)
-    encoded_facet_name.to_s.split('_interaction_')[0]
+    encoded_facet_name.to_s.split(encoding_token_for_breadcrumb_position)[0]
   end
   
   def create_breadcrumb_url(encoded_facet_name, value, localized_params=params)  
@@ -146,7 +171,7 @@ module ApplicationHelper
   end
   
   def breadcrumb_position(encoded_facet_name)
-    encoded_facet_name.to_s.split('_interaction_')[1]
+    encoded_facet_name.to_s.split(encoding_token_for_breadcrumb_position)[1]
   end
   
 end
