@@ -70,6 +70,22 @@ module ApplicationHelper
   
   # Method overrides w.r.t Blacklight plugin render_constraints_helper----------------------------------------------
   
+  def render_constraints_query(localized_params = params)
+    content = ""
+    if (!localized_params[:q].blank?)
+      localized_params[:q].each_pair do |query, value|
+        if query.to_s.include?("q" + encoding_token)
+          corresponding_search_field_key = ("search_field" + encoding_token +  index_from_encoded_key(query)).to_sym
+          corresponding_search_field_value = localized_params[:q][corresponding_search_field_key]
+          content << render_constraint_element(corresponding_search_field_value, decode_breadcrumb_key_for_name(value),
+                  :classes => ["query"],
+                  :remove => catalog_index_path(localized_params.merge(:q=>nil, :action=>'index')))
+        end
+      end
+      return content
+    end
+  end
+
   # cf. Blacklight, instead of using Named Route + Hash rendering, 
   # :remove is constructed from the Dictionary Hash (with orderly parameters)
   # so that the rendered URL preserve the existing faceting (constraint) order 
@@ -78,7 +94,7 @@ module ApplicationHelper
     content = ""
     localized_params[:f].each_pair do |facet,values|        
       values.each do |val|
-        content << render_constraint_element( facet_field_labels[decode_facet_name(facet)],
+        content << render_constraint_element( facet_field_labels[decode_breadcrumb_key_for_name(facet)],
                 val,
                 :breadcrumb => catalog_index_path + create_breadcrumb_url(facet, val, localized_params),
                 :remove => catalog_index_path + remove_facet_params(facet, val, localized_params),
@@ -92,12 +108,7 @@ module ApplicationHelper
   # New helper methos w.r.t to Blacklight --------------------------------------------------------------------------
   
   # returns a Dictionary Hash (http://facets.rubyforge.org/apidoc/api/more/classes/Dictionary.html)
-  # which preserve the order of faceting key-value URL parameters. Note: currently testing faceting
-  # navigation only
-  def encoding_token_for_breadcrumb_position
-    '_interaction_'
-  end
-
+  # which preserve the order of query and facet key-value URL parameters.
   def params_for_ui
     {:q => order_encode_query_params, :f => order_encode_facet_params }
   end
@@ -124,7 +135,8 @@ module ApplicationHelper
     # split and extract facet parameters from the request uri (currently testing faceting only)
     query_string_array = request.query_string.split('&').select { |i| i[0..0].include?("q") or i.include?("search_field")}
     query_string_array.each_with_index { |f, index|
-      key = encode_query_name(f.split('=')[0], index)
+      index_no = f.split('=')[0].include?("search_field") ? index - 1 : index
+      key = encode_query_name(f.split('=')[0], index_no)
       value = f.split('=')[1]
       order_encode_parameters[key.to_sym]= CGI::unescape(value)
     }
@@ -138,7 +150,7 @@ module ApplicationHelper
   def params_for_url(localized_params=params)    
     url_queries = "?"
     localized_params.each { |item|
-      facet_name = decode_facet_name(item[0])
+      facet_name = decode_breadcrumb_key_for_name(item[0])
       url_queries = url_queries + "f"+ CGI::escape("["+facet_name+"][]")+"="+item[1] + "&"
     }
     url_queries.chomp("&")
@@ -148,19 +160,30 @@ module ApplicationHelper
   # :subject_facet_interaction_0 => "physics",:subject_facet_interaction_1 => "maths"
   # for breadcrumbs navigation
   def encode_facet_name_as_key(facet_name,index)
-    facet_name + encoding_token_for_breadcrumb_position + index.to_s
+    facet_name + encoding_token + index.to_s
   end
   
   # e.g. encodes {:subject_facet => [physics, maths] } into
   # :subject_facet_interaction_0 => "physics",:subject_facet_interaction_1 => "maths"
   # for breadcrumbs navigation
   def encode_query_name(query_name,index)
-    query_name + encoding_token_for_breadcrumb_position + index.to_s
+    query_name + encoding_token + index.to_s
   end
 
   # e.g. decodes :subject_facet_interaction_0 into :subject_facet
-  def decode_facet_name(encoded_facet_name)
-    encoded_facet_name.to_s.split(encoding_token_for_breadcrumb_position)[0]
+  def decode_breadcrumb_key_for_name(encoded_query_or_facet_key)
+    encoded_query_or_facet_key.to_s.split(encoding_token)[0]
+  end
+
+  # token used to encode facet and query name with
+  # interaction order (number) as per user interactions
+  def encoding_token
+     '_interaction_'
+  end
+
+  # e.g. gets '0' from ':subject_facet_interaction_0'
+  def index_from_encoded_key(encoded_query_or_facet_key)
+    encoded_query_or_facet_key.to_s.split(encoding_token)[1]
   end
   
   def create_breadcrumb_url(encoded_facet_name, value, localized_params=params)  
@@ -171,7 +194,7 @@ module ApplicationHelper
   end
   
   def breadcrumb_position(encoded_facet_name)
-    encoded_facet_name.to_s.split(encoding_token_for_breadcrumb_position)[1]
+    encoded_facet_name.to_s.split(encoding_token)[1]
   end
   
 end
