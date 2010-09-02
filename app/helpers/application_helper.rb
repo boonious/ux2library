@@ -65,7 +65,7 @@ module ApplicationHelper
 
     # Force action to be index. 
     new_params[:action] = "index"
-    params_for_url new_params[:f]
+    params_for_url (new_params[:q].empty? ? new_params[:f] :  new_params[:q].merge(new_params[:f]))
   end
   
   # Method overrides w.r.t Blacklight plugin render_constraints_helper----------------------------------------------
@@ -143,15 +143,19 @@ module ApplicationHelper
     order_encode_parameters
   end
 
-  # given a Dictionary Hash with orderly faceting parameters (constraints)
+  # given a Dictionary Hash with orderly query/faceting parameters (constraints)
   # construct a URL request string reflecting the order of the hash, e.g. 
   # from {:subject_facet_interaction_0 => "physics",:subject_facet_interaction_1 => "maths" }
   # to "?f[:subject_facet][]=physics&f[:subject_facet][]=maths"
   def params_for_url(localized_params=params)    
     url_queries = "?"
     localized_params.each { |item|
-      facet_name = decode_breadcrumb_key_for_name(item[0])
-      url_queries = url_queries + "f"+ CGI::escape("["+facet_name+"][]")+"="+item[1] + "&"
+      key = decode_breadcrumb_key_for_name(item[0])
+      if key.include?("q") or key.include?("search_field") 
+        url_queries = url_queries + key +"="+item[1] + "&"
+      else
+        url_queries = url_queries + "f"+ CGI::escape("["+key+"][]")+"="+item[1] + "&"
+      end
     }
     url_queries.chomp("&")
   end
