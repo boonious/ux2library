@@ -208,16 +208,24 @@ module ApplicationHelper
     current_position = breadcrumb_position encoded_key
     p = localized_params.dup
     if encoded_key.to_s.include?("q"+encoding_token)
-      p[:q] = p[:q].dup.merge(p[:f])
-      logger.info "p[:q]...." + p[:q].inspect
-      params_for_url p[:q].select { |k,v|  breadcrumb_position(k) <= current_position }
+      p[:q] = p[:q].dup
+      previous_current_breadcrumbs = p[:q].select { |k,v|  breadcrumb_position(k) <= current_position }
+      params_for_url (hash_from_breadcrumb_array previous_current_breadcrumbs).merge(p[:f])
     else
-      p[:f] = p[:f].dup.merge(p[:q])
-      logger.info "p[:f] ...." + p[:f].inspect
-      params_for_url p[:f].select { |k,v|  breadcrumb_position(k) <= current_position }
+      p[:f] = p[:f].dup
+      previous_current_breadcrumbs = p[:f].select { |k,v|  breadcrumb_position(k) <= current_position }
+      params_for_url (hash_from_breadcrumb_array previous_current_breadcrumbs).merge(p[:q])
     end
   end
-  
+
+  def hash_from_breadcrumb_array(breadcrumb_array)
+    breadcrumb_dictionary_hash = Dictionary.new
+    breadcrumb_array.each { |item|
+      breadcrumb_dictionary_hash[item[0]]=item[1]
+    }
+    breadcrumb_dictionary_hash
+  end
+
   def breadcrumb_position(encoded_key)
     encoded_key.to_s.split(encoding_token)[1]
   end
