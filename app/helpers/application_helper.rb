@@ -68,6 +68,21 @@ module ApplicationHelper
     params_for_url (new_params[:q].empty? ? new_params[:f] :  new_params[:q].merge(new_params[:f]))
   end
   
+  # render orderly hidden facet fields in search form using Dictionary
+  def search_as_hidden_fields(options={})
+    ordered_query_facet_parameters = params_for_ui
+    return hash_as_hidden_fields(ordered_query_facet_parameters)
+  end
+
+  def hash_as_hidden_fields(ordered_query_facet_parameters)
+    hidden_fields = []
+    ordered_query_facet_parameters[:f].each_pair do |k,v|
+      facet_name = "f["+decode_breadcrumb_key_for_name(k.to_s)+"][]"
+      hidden_fields << hidden_field_tag(facet_name, v, :id => nil)
+    end
+    hidden_fields.join("\n")
+  end
+
   # Method overrides w.r.t Blacklight plugin render_constraints_helper----------------------------------------------
   
   def render_constraints_query(localized_params = params)
