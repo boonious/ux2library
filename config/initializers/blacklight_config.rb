@@ -110,24 +110,28 @@ Blacklight.configure(:shared) do |config|
     :field_names => [
       "title_display",
       "title_vern_display",
+      "subtitle_display",
       "author_display",
       "author_vern_display",
       "format",
-      "language_facet",
-      "published_display",
-      "published_vern_display",
-      "lc_callnum_display"
+      "pub_date"
+     # "language_facet",
+     #  "published_display",
+     # "published_vern_display",
+     #  "lc_callnum_display"
     ],
     :labels => {
       "title_display"           => "Title:",
       "title_vern_display"      => "Title:",
+      "subtitle_display"        => "Subtitle:",
       "author_display"          => "Author:",
       "author_vern_display"     => "Author:",
       "format"                  => "Format:",
-      "language_facet"          => "Language:",
-      "published_display"       => "Published:",
-      "published_vern_display"  => "Published:",
-      "lc_callnum_display"      => "Call number:"
+      "pub_date"                 => "Year:"
+    #  "language_facet"          => "Language:",
+    #  "published_display"       => "Published:",
+    #  "published_vern_display"  => "Published:",
+    #  "lc_callnum_display"      => "Call number:"
     }
   }
 

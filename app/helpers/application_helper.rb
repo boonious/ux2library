@@ -5,7 +5,15 @@ require 'facets/dictionary'
 module ApplicationHelper
   
   # Method overrides w.r.t Blacklight plugin application_helper-----------------------------------------------------
+
+  def document_heading
+    @document["subtitle_display"] ? @document[Blacklight.config[:show][:heading]] + ": " + @document["subtitle_display"] : @document[Blacklight.config[:show][:heading]] 
+  end
   
+  def render_document_heading
+    '<h3>' + document_heading + '</h3>'
+  end
+
   # cf. Blacklight, add span to display the item hits differently
   def render_facet_value(facet_solr_field, item, options ={})
     facet_number_tag =  content_tag(:span, format_num(item.hits), :class => "facet_number")

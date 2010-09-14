@@ -1,0 +1,8 @@
+%section#documents
+	- @document_list.each_with_index do |document,counter|
+		%section.document
+			= render :partial=>'bookmark_control', :locals=>{:document=>document}
+			%p
+				= counter + 1 + @response.params[:start].to_i
+				= link_to_document document, :label=>document_show_link_field, :counter => (counter + 1 + @response.params[:start].to_i)
+				= render_document_partial document, :index
