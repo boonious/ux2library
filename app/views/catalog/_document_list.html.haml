@@ -5,4 +5,4 @@
 			%p
 				= counter + 1 + @response.params[:start].to_i
 				= link_to_document document, :label=>document_show_link_field, :counter => (counter + 1 + @response.params[:start].to_i)
-				= render_document_partial document, :index
+				= render_document_partial document, :index, :main

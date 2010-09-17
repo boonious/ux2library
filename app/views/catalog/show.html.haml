@@ -1,9 +1,13 @@
 -@page_title = "#{document_show_html_title} - #{application_name}"
-%p= link_back_to_catalog
 %section#commons
+	%p= link_back_to_catalog
+
 	%section{:id => "doc_"+ @document[:id].to_s }
 		= render_document_heading
-		%section.tools
-			= render :partial => 'show_tools'
+		-#%section.tools
+			-#= render :partial => 'show_tools'
 		%section.document
-			= render_document_partial @document, :show
+			= render_document_partial @document, :show, :main
+
+%aside.sidebar
+	= render_document_partial @document, :show, :sidebar

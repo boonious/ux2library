@@ -4,7 +4,7 @@ require 'facets/dictionary'
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   
-  # Method overrides w.r.t Blacklight plugin application_helper-----------------------------------------------------
+  # Method overrides w.r.t Blacklight plugin application_helper------------------------------------------------------------------------------
 
   def document_heading
     @document["subtitle_display"] ? @document[Blacklight.config[:show][:heading]] + ": " + @document["subtitle_display"] : @document[Blacklight.config[:show][:heading]] 
@@ -12,6 +12,15 @@ module ApplicationHelper
   
   def render_document_heading
     '<h3>' + document_heading + '</h3>'
+  end
+
+  def render_document_partial(doc, action_name, mode)
+    format = document_partial_name(doc)
+    begin
+      render :partial=>"catalog/_#{action_name}_partials/#{format}", :locals=>{:document=>doc, :mode => mode }
+    rescue ActionView::MissingTemplate
+      render :partial=>"catalog/_#{action_name}_partials/default", :locals=>{:document=>doc, :mode => mode }
+    end
   end
 
   # cf. Blacklight, add span to display the item hits differently
