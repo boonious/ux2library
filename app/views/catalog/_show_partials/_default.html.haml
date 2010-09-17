@@ -11,11 +11,11 @@
 						%li
 							%p
 								%a{:href => link["target"][0]["url"]}= link["target"][0]["title"]
-	- if @zemanta_suggestions["articles"]
+	- if !@zemanta_articles.empty?
 		%section.facet_limit
 			%hr
 			%h5 Articles
-			- @zemanta_suggestions["articles"][0]["article"].each do |article|
+			- @zemanta_articles["article"].each do |article|
 				%p
 					%a{:href => article["url"]}= article["title"]
 					%br
@@ -48,4 +48,4 @@
 						%dd.metadata_value= document[solr_fname]
 	
 	- if @gdata_description
-		%p= @gdata_description.text	
+		%p= @gdata_description.text

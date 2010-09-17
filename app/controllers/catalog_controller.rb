@@ -25,9 +25,11 @@ class CatalogController < ApplicationController
                                 'text'=> @text_for_zemanta, 'format' => 'xml', 'return_images' => '0'})
     
      @zemanta_suggestions = XmlSimple.xml_in(@zemanta_suggestions_test.body)
-     zemanta_link_type_array = @zemanta_suggestions["markup"][0]["links"][0]["link"].collect { |link| link["target"][0]["type"]}
+     links = @zemanta_suggestions["markup"][0]["links"][0]
+     zemanta_link_type_array = @zemanta_suggestions["markup"][0]["links"][0]["link"].collect { |link| link["target"][0]["type"]} if !links.empty?
      @zemanta_link_types = zemanta_link_type_array.uniq.flatten.sort {|x,y| y <=> x } if zemanta_link_type_array
-                                    
+     @zemanta_articles = @zemanta_suggestions["articles"][0]
+
      respond_to do |format|
        format.html {setup_next_and_previous_documents}
 
