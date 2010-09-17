@@ -1,0 +1,51 @@
+- if mode == :sidebar
+	= render :partial=>'home_text'
+	
+	- if @zemanta_link_types
+		- @zemanta_link_types.each do |link_type|
+			%section.facet_limit
+				%hr
+				%h5= link_type.capitalize	
+				%ul
+					- @zemanta_suggestions["markup"][0]["links"][0]["link"].select {|x| x["target"][0]["type"].to_s.include?(link_type)}.each do |link|
+						%li
+							%p
+								%a{:href => link["target"][0]["url"]}= link["target"][0]["title"]
+	- if @zemanta_suggestions["articles"]
+		%section.facet_limit
+			%hr
+			%h5 Articles
+			- @zemanta_suggestions["articles"][0]["article"].each do |article|
+				%p
+					%a{:href => article["url"]}= article["title"]
+					%br
+					%span.facet_number=article["url"].to_s.gsub("http://", "").gsub("https://", "").split('/')[0].gsub("www.","")				
+- else
+	- if @gdata_image and @gdata_image.to_s.include? "zoom"
+		%p.book_cover
+			%img{:src => @gdata_image.to_s.gsub("zoom=5","zoom=1") }
+		
+	- if document[:author_display]
+		%p
+			%b="By "
+			= document[:author_display]
+	%p
+		%dl
+			- document_show_fields.each do |solr_fname|
+				- if document[solr_fname] and !(solr_fname.include? "title" or solr_fname.include? "author")
+					- if document[solr_fname].is_a?(Array)
+						%dt.metadata_label= document_show_field_labels[solr_fname]
+						- if @gdata_image and @gdata_image.to_s.include? "zoom"
+							%dd.metadata_value_wider
+								- document[solr_fname].each do |val|
+									= val
+						- else
+							%dd.metadata_value
+								- document[solr_fname].each do |val|
+									= val
+					- else
+						%dt.metadata_label= document_show_field_labels[solr_fname]
+						%dd.metadata_value= document[solr_fname]
+	
+	- if @gdata_description
+		%p= @gdata_description.text	

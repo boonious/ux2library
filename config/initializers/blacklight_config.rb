@@ -153,7 +153,8 @@ Blacklight.configure(:shared) do |config|
       "published_display",
       "published_vern_display",
       "lc_callnum_display",
-      "isbn_t"
+      "isbn_display",
+      "subject_topic_facet"
     ],
     :labels => {
       "title_display"           => "Title:",
@@ -162,7 +163,7 @@ Blacklight.configure(:shared) do |config|
       "subtitle_vern_display"   => "Subtitle:",
       "author_display"          => "Author:",
       "author_vern_display"     => "Author:",
-      "format"                  => "Format:",
+      "format"                  => "Type:",
       "url_fulltext_display"    => "URL:",
       "url_suppl_display"       => "More Information:",
       "material_type_display"   => "Physical description:",
@@ -170,7 +171,8 @@ Blacklight.configure(:shared) do |config|
       "published_display"       => "Published:",
       "published_vern_display"  => "Published:",
       "lc_callnum_display"      => "Call number:",
-      "isbn_t"                  => "ISBN:"
+      "isbn_display"                  => "ISBN:",
+      "subject_topic_facet"     => "Subject:"
     }
   }
 
@@ -200,5 +202,15 @@ Blacklight.configure(:shared) do |config|
   # If there are more than this many search results, no spelling ("did you 
   # mean") suggestion is offered.
   config[:spell_max] = 5
+
+  config[:data_augmentation] = {
+    :gdata => {
+      :endpoint_book_search => 'http://books.google.com/books/feeds/volumes'
+    },
+    :zemanta => {
+      :endpoint => 'http://api.zemanta.com/services/rest/0.0/',
+      :developer_key => ''
+    }
+  }
 end
 
