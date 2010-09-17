@@ -1,12 +1,12 @@
 %p
-- if index_field_names.to_s.include? "author" and !document.get("author_display").nil?
-	- index_field_names.select {|name| name.include? "author"}.each do |solr_fname|
-		%span.author= h document.get(solr_fname)	
-	%br
-- index_field_names.each do |solr_fname|
-	- if document.get solr_fname and !(solr_fname.include? "title" or solr_fname.include? "author")
-		-#= h index_field_labels[solr_fname]
-		- if index_field_names.rindex(solr_fname) + 1 != index_field_names.size
-			= h document.get(solr_fname).capitalize + ','
-		- else
-			= h document.get(solr_fname).capitalize
+	- if index_field_names.to_s.include? "author" and !document.get("author_display").nil?
+		- index_field_names.select {|name| name.include? "author"}.each do |solr_fname|
+			%span.author= h document.get(solr_fname)
+%p
+	- index_field_names.each do |solr_fname|
+		- if document.get solr_fname and !(solr_fname.include? "title" or solr_fname.include? "author")
+			-#= h index_field_labels[solr_fname]
+			- if index_field_names.rindex(solr_fname) + 1 != index_field_names.size
+				= h document.get(solr_fname).capitalize + ','
+			- else
+				= h document.get(solr_fname).capitalize
