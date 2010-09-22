@@ -36,7 +36,8 @@ class CatalogController < ApplicationController
           gdata_xml = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '?q=' + query_string).to_xml
           gdata = REXML::XPath.each(gdata_xml, "//entry").collect { |entry|
             isbn_node = entry.get_elements("dc:identifier[contains(.,'ISBN')]").first
-            [entry.get_elements("link").first.attribute("href").to_s, isbn_node ? isbn_node.text : "" ]
+            embeddability_node = entry.get_elements("gbs:embeddability").first
+            [entry.get_elements("link").first.attribute("href").to_s, isbn_node ? isbn_node.text : "",  embeddability_node.attribute("value").to_s]
           }
           @gdata = @gdata.nil? ? gdata : @gdata + gdata # merge results to the calls
           break
@@ -45,7 +46,8 @@ class CatalogController < ApplicationController
           gdata_xml = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '?q=' + query_string).to_xml
           gdata = REXML::XPath.each(gdata_xml, "//entry").collect { |entry|
             isbn_node = entry.get_elements("dc:identifier[contains(.,'ISBN')]").first
-            [entry.get_elements("link").first.attribute("href").to_s, isbn_node ? isbn_node.text : "" ]
+            embeddability_node = entry.get_elements("gbs:embeddability").first
+            [entry.get_elements("link").first.attribute("href").to_s, isbn_node ? isbn_node.text : "", embeddability_node.attribute("value").to_s]
           }
           @gdata = @gdata.nil? ? gdata : @gdata + gdata  # merge results to the calls
         end

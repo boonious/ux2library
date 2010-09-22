@@ -10,3 +10,10 @@
 				= h document.get(solr_fname).capitalize + ','
 			- else
 				= h document.get(solr_fname).capitalize
+
+
+- if document["isbn_t"] and @gdata
+	- @gdata_embeddability = @gdata.select {|gdata| gdata[1].include?(document["isbn_t"][0]) }[0]
+	- if @gdata_embeddability and @gdata_embeddability.to_s.include?("http://schemas.google.com/books/2008#embeddable")
+		%p
+			%i="preview"
