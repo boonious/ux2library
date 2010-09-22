@@ -1,0 +1,29 @@
+!!!
+%meta{:charset=>"utf-8"}
+%meta{:name=>"description", :content=>"UX2.0: Usability and Contemporary User Experience in Digital Libraries"}
+%title=h(@page_title || application_name)
+%meta{:name=>"language", :content=>I18n.locale}
+%meta{'http-equiv'=>"content-style-type", :content=>"text/css"}
+%meta{'http-equiv'=>"content-type", :content=>"text/html; charset=utf-8"}
+%meta{:name=>"title", :content=>h(@page_title || application_name)}
+%meta{:name=>"keywords", :content=>"ux2, usability, user experience, digital libraries"}
+%meta{:name=>"author", :content=>"Boon Low"}
+
+%link{:rel=>"stylesheet", :href=>"/stylesheets/surface.css", :type=>"text/css"}
+%link{:rel=>"stylesheet", :href=>"/stylesheets/layout.css", :type=>"text/css"}
+%script{:type=>"text/javascript", :src=>"http://www.google.com/jsapi"}
+
+%section#page
+	%header.masthead
+		%nav
+			%section#left_header_menu 
+				%ul
+					%li= link_to 'Home', 'http://ux2.nesc.ed.ac.uk'
+					%li= link_to 'JISC UX2.0', 'http://ux2.nesc.ed.ac.uk'
+					%li= link_to 'Library', root_path
+			%section#right_header_menu
+				= render :partial=>'/user_util_links'
+		= render :partial=>'/flash_msg'
+	= yield
+	%footer
+		= @footer

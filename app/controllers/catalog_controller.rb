@@ -97,6 +97,8 @@ class CatalogController < ApplicationController
     end
   end
   
+  protected
+
   # remember URL params (ordered) in session for URL reconstruction later
   def delete_or_assign_orderly_search_session_params
     session[:orderly_search_params] = {}
@@ -105,6 +107,12 @@ class CatalogController < ApplicationController
     params_for_ui.each_pair do |key, value|
       session[:orderly_search_params][key] = value
     end
+  end
+
+  def setup_next_and_previous_documents
+    setup_previous_document
+    setup_next_document
+    render :layout => "layouts/item"
   end
 
 end
