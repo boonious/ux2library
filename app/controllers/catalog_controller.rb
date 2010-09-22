@@ -73,6 +73,8 @@ class CatalogController < ApplicationController
         gdata_doc = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '/' + gdata_id).to_xml
         @gdata_image = REXML::XPath.first(gdata_doc, "//entry/link/@href")
         @gdata_description = REXML::XPath.first(gdata_doc, "//entry/dc:description")
+        @gdata_embeddability = REXML::XPath.first(gdata_doc, "//entry/gbs:embeddability")
+        @gdata_viewability = REXML::XPath.first(gdata_doc, "//entry/gbs:viewability")
       end
     end
      

@@ -11,7 +11,11 @@
 
 %link{:rel=>"stylesheet", :href=>"/stylesheets/surface.css", :type=>"text/css"}
 %link{:rel=>"stylesheet", :href=>"/stylesheets/layout.css", :type=>"text/css"}
-%script{:type=>"text/javascript", :src=>"http://www.google.com/jsapi"}
+ 
+- if @gdata_embeddability and @gdata_embeddability.to_s.include?"http://schemas.google.com/books/2008#embeddable"
+	%script{:type=>"text/javascript", :src=>"http://www.google.com/jsapi"}
+	%script{:type=>"text/javascript"}
+		google.load("book", "0")
 
 %section#page
 	%header.masthead
