@@ -3,6 +3,9 @@ require 'xmlsimple'
 
 class CatalogController < ApplicationController
 
+  include OrderedQueryFacetingParametersHelper
+  before_filter :delete_or_assign_orderly_search_session_params,  :only=>:index
+
   # Incorporate code for call Google book search API up to 4 times to retrieve book covers using a
   # list of isbn numbers obtained from Solr.
   #
@@ -94,4 +97,14 @@ class CatalogController < ApplicationController
     end
   end
   
+  # remember URL params (ordered) in session for URL reconstruction later
+  def delete_or_assign_orderly_search_session_params
+    session[:orderly_search_params] = {}
+    # params_for_ui encodes URL query and faceting parameters)
+    # in an orderly Dictionary Hash.
+    params_for_ui.each_pair do |key, value|
+      session[:orderly_search_params][key] = value
+    end
+  end
+
 end
