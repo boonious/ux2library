@@ -3,8 +3,60 @@ require 'xmlsimple'
 
 class CatalogController < ApplicationController
   
-  # get single document from the solr index
-   def show
+  # Incorporate code for call Google book search API up to 4 times to retrieve book covers using a
+  # list of isbn numbers obtained from Solr.
+  #
+  # Multiple calls to Google are required because the Books Search API returns 0 hits if the request
+  # contains more than 3 or 4 isbn numbers.
+  #
+  # Only for prototyping and usability testing purposes as multiple Google calls per search incurs
+  # significance performance issues.
+  def index
+
+    extra_head_content << '<link rel="alternate" type="application/rss+xml" title="RSS for results" href="'+ url_for(params.merge("format" => "rss")) + '">'
+    extra_head_content << '<link rel="alternate" type="application/atom+xml" title="Atom for results" href="'+ url_for(params.merge("format" => "atom")) + '">'
+
+    (@response, @document_list) = get_search_results
+    @filters = params[:f] || []
+
+    if !(params[:q].blank? and params[:f].blank? and params[:search_field].blank?)
+      gdata_client = GData::Client::BookSearch.new
+      isbn_nos = @response.docs.select {|x| x["isbn_t"] }.collect {|x| x["isbn_t"][0]}
+      increments = 3
+
+      3.times { |t|
+        start_index = t*increments
+        end_index = t*increments + 2
+        if end_index > isbn_nos.size
+          break if start_index > isbn_nos.size
+          query_string = isbn_nos[start_index..-1].join("+OR+")
+          gdata_xml = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '?q=' + query_string).to_xml
+          gdata = REXML::XPath.each(gdata_xml, "//entry").collect { |entry|
+            isbn_node = entry.get_elements("dc:identifier[contains(.,'ISBN')]").first
+            [entry.get_elements("link").first.attribute("href").to_s, isbn_node ? isbn_node.text : "" ]
+          }
+          @gdata = @gdata.nil? ? gdata : @gdata + gdata # merge results to the calls
+          break
+        else
+          query_string = isbn_nos[start_index..end_index].join("+OR+")
+          gdata_xml = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '?q=' + query_string).to_xml
+          gdata = REXML::XPath.each(gdata_xml, "//entry").collect { |entry|
+            isbn_node = entry.get_elements("dc:identifier[contains(.,'ISBN')]").first
+            [entry.get_elements("link").first.attribute("href").to_s, isbn_node ? isbn_node.text : "" ]
+          }
+          @gdata = @gdata.nil? ? gdata : @gdata + gdata  # merge results to the calls
+        end
+      }
+    end
+
+    respond_to do |format|
+      format.html { save_current_search_params }
+      format.rss  { render :layout => false }
+      format.atom { render :layout => false }
+    end
+  end
+
+  def show
      @response, @document = get_solr_response_for_doc_id
           
      if @document[:isbn_t]
