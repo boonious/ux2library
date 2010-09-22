@@ -101,6 +101,25 @@ module ApplicationHelper
     hidden_fields.join("\n")
   end
 
+  # create a link back the results page from item details page using session info logged in index filter
+  # cf. Blacklight, this method also use the session[:orderly_search_params] which contains query and faceting
+  # parameters encoded in orderly fashion - to preserve the interaction action in breadcrumb navigation
+  def link_back_to_catalog(opts={:label=>'Back to Search Results'})
+     query_params = session[:search].dup || {}
+     query_params.delete :counter
+     query_params.delete :total
+     # use ordered parameters of session[:orderly_search_params] instead
+     query_params.delete :q
+     query_params.delete :search_field
+     query_params.delete :f
+     query = session[:orderly_search_params][:q]
+     facet_query = session[:orderly_search_params][:f]
+     orderly_query_faceting_parameters = params_for_url (query.empty? ? facet_query : query.merge(facet_query))
+     other_params = catalog_index_path(query_params)
+     link_url = other_params.include?("?") ? other_params.split("?")[0] +  orderly_query_faceting_parameters + "&" +  other_params.split("?")[1] : other_params + orderly_query_faceting_parameters     
+     link_to opts[:label], link_url
+   end
+
   # Method overrides w.r.t Blacklight plugin render_constraints_helper----------------------------------------------
   
   def render_constraints_query(localized_params = params)
