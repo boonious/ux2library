@@ -112,8 +112,9 @@ module ApplicationHelper
      query_params.delete :q
      query_params.delete :search_field
      query_params.delete :f
-     query = session[:orderly_search_params][:q]
-     facet_query = session[:orderly_search_params][:f]
+     orderly_query_params = session[:orderly_search_params]
+     query = orderly_query_params ? orderly_query_params[:q] : {}
+     facet_query = orderly_query_params ? orderly_query_params[:f] : {}
      orderly_query_faceting_parameters = params_for_url (query.empty? ? facet_query : query.merge(facet_query))
      other_params = catalog_index_path(query_params)
      link_url = other_params.include?("?") ? other_params.split("?")[0] +  orderly_query_faceting_parameters + "&" +  other_params.split("?")[1] : other_params + orderly_query_faceting_parameters     
