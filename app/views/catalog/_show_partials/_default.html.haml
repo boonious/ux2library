@@ -11,15 +11,16 @@
 						%li
 							%p
 								%a{:href => link["target"][0]["url"]}= link["target"][0]["title"]
-	- if !@zemanta_articles.empty?
-		%section.facet_limit
-			%hr
-			%h5 Articles
-			- @zemanta_articles["article"].each do |article|
-				%p
-					%a{:href => article["url"]}= article["title"]
-					%br
-					%span.facet_number=article["url"].to_s.gsub("http://", "").gsub("https://", "").split('/')[0].gsub("www.","")				
+	- if @zemanta_articles
+		- if !@zemanta_articles.empty?
+			%section.facet_limit
+				%hr
+				%h5 Articles
+				- @zemanta_articles["article"].each do |article|
+					%p
+						%a{:href => article["url"]}= article["title"]
+						%br
+						%span.facet_number=article["url"].to_s.gsub("http://", "").gsub("https://", "").split('/')[0].gsub("www.","")
 - else
 	- if @gdata_image and @gdata_image.to_s.include? "zoom"
 		%p.book_cover
@@ -38,11 +39,11 @@
 						- if @gdata_image and @gdata_image.to_s.include? "zoom"
 							%dd.metadata_value_wider
 								- document[solr_fname].each do |val|
-									= val
+									= link_to_new_facet_query(solr_fname, val)
 						- else
 							%dd.metadata_value
 								- document[solr_fname].each do |val|
-									= val
+									= link_to_new_facet_query(solr_fname, val)
 					- else
 						%dt.metadata_label= document_show_field_labels[solr_fname]
 						%dd.metadata_value= document[solr_fname]
