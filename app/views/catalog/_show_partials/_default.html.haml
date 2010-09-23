@@ -29,7 +29,11 @@
 	- if document[:author_display]
 		%p
 			%b="By "
-			= document[:author_display]
+			- number_of_authors = document[:author_display].split("■").size
+			- author_links(document[:author_display]).each_with_index do |author_link, index|
+				= author_link
+				- if index + 1 < number_of_authors
+					&#9632;
 	%p
 		%dl
 			- document_show_fields.each do |solr_fname|
