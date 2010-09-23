@@ -5,6 +5,28 @@ module ApplicationHelper
   
   include OrderedQueryFacetingParametersHelper
 
+  # create links for new faceting query, e.g. retrieving results to a particular author)
+  # in item details page.
+  def link_to_new_facet_query(field, value)
+    p = params.dup
+    p.delete :page
+    p.delete :action
+    p.delete :q
+    p.delete :search_field
+    p.delete :f
+    p.delete :id
+    p[:f] = {}
+    if field.include? "_display"
+      link_url = catalog_index_path(p)
+      link_to(value, link_url+"q="+value)
+    else
+      p[:f][field] = []
+      p[:f][field].push(value)
+      link_url = catalog_index_path(p)
+      link_to(value, link_url)
+    end
+  end
+
   # Method overrides w.r.t Blacklight plugin application_helper------------------------------------------------------------------------------
 
   def document_heading
