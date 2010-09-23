@@ -38,12 +38,18 @@
 						%dt.metadata_label= document_show_field_labels[solr_fname]
 						- if @gdata_image and @gdata_image.to_s.include? "zoom"
 							%dd.metadata_value_wider
-								- document[solr_fname].each do |val|
+								- number_of_items = document[solr_fname].size
+								- document[solr_fname].each_with_index do |val, index|
 									= link_to_new_facet_query(solr_fname, val)
+									- if index + 1 < number_of_items
+										&#9632;
 						- else
 							%dd.metadata_value
-								- document[solr_fname].each do |val|
+								- number_of_items = document[solr_fname].size
+								- document[solr_fname].each_with_index do |val, index|
 									= link_to_new_facet_query(solr_fname, val)
+									- if index + 1 < number_of_items
+										&#9632;
 					- else
 						%dt.metadata_label= document_show_field_labels[solr_fname]
 						%dd.metadata_value= document[solr_fname]
