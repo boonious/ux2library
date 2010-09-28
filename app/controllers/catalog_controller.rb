@@ -1,5 +1,4 @@
 require 'gdata'
-require 'xmlsimple'
 require 'nokogiri'
 require 'open-uri'
 
@@ -82,16 +81,8 @@ class CatalogController < ApplicationController
     end
 
     @text_for_zemanta =  @gdata_description ?  @document[:opensearch_display].join(" ") + @gdata_description.text : @document[:opensearch_display].join(" ")
-    @zemanta_suggestions_test = Net::HTTP.post_form(URI.parse(Blacklight.config[:data_augmentation][:zemanta][:endpoint]),
-                              { 'method'=>'zemanta.suggest', 'api_key'=> Blacklight.config[:data_augmentation][:zemanta][:developer_key],
-                                'text'=> @text_for_zemanta, 'format' => 'xml', 'return_images' => '0'})
+    create_zemanta_suggestions @text_for_zemanta
     
-    @zemanta_suggestions = XmlSimple.xml_in(@zemanta_suggestions_test.body)
-    links = @zemanta_suggestions["markup"][0]["links"][0]
-    zemanta_link_type_array = @zemanta_suggestions["markup"][0]["links"][0]["link"].collect { |link| link["target"][0]["type"]} if !links.empty?
-    @zemanta_link_types = zemanta_link_type_array.uniq.flatten.sort {|x,y| y <=> x } if zemanta_link_type_array
-    @zemanta_articles = @zemanta_suggestions["articles"][0]
-
     respond_to do |format|
       format.html {setup_next_and_previous_documents}
       # Add all dynamically added (such as by document extensions)
@@ -120,6 +111,19 @@ class CatalogController < ApplicationController
     setup_previous_document
     setup_next_document
     render :layout => "layouts/item"
+  end
+
+  def create_zemanta_suggestions(text_for_suggestions)
+    zemanta_suggestions_xml = Net::HTTP.post_form(URI.parse(Blacklight.config[:data_augmentation][:zemanta][:endpoint]),
+                              { 'method'=>'zemanta.suggest', 'api_key'=> Blacklight.config[:data_augmentation][:zemanta][:developer_key],
+                                'text'=> text_for_suggestions, 'format' => 'xml', 'return_images' => '0'})
+
+    zemanta_suggestions =  Nokogiri::XML(zemanta_suggestions_xml.body)
+    link_types = zemanta_suggestions.xpath("//markup/links/link/target/type")
+    zemanta_link_types = link_types.collect { |link_type| link_type.text } if !link_types.empty?
+    @zemanta_unique_link_types = zemanta_link_types.uniq.flatten.sort {|x,y| y <=> x } if zemanta_link_types
+    @zemanta_links = zemanta_suggestions.xpath("//markup/links/link")
+    @zemanta_articles = zemanta_suggestions.xpath("//articles/article")
   end
 
   def parse_voyager_holding_details(holding_details)

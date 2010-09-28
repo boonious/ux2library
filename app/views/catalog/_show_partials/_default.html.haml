@@ -1,26 +1,28 @@
 - if mode == :sidebar
 	= render :partial=>'home_text'
 	
-	- if @zemanta_link_types
-		- @zemanta_link_types.each do |link_type|
+	- if @zemanta_unique_link_types
+		- @zemanta_unique_link_types.each do |link_type|
 			%section.facet_limit
 				%hr
-				%h5= link_type.capitalize	
+				%h5= link_type.capitalize
 				%ul
-					- @zemanta_suggestions["markup"][0]["links"][0]["link"].select {|x| x["target"][0]["type"].to_s.include?(link_type)}.each do |link|
+					- @zemanta_links.xpath("target").select{ |x| x.xpath("type").text.include?(link_type)}.each do |target|
 						%li
 							%p
-								%a{:href => link["target"][0]["url"]}= link["target"][0]["title"]
+								%a{:href => target.xpath("url").text}= target.xpath("title").text
+
 	- if @zemanta_articles
 		- if !@zemanta_articles.empty?
 			%section.facet_limit
 				%hr
 				%h5 Articles
-				- @zemanta_articles["article"].each do |article|
+				- @zemanta_articles.each do |article|
 					%p
-						%a{:href => article["url"]}= article["title"]
+						%a{:href => article.xpath("url").text}= article.xpath("title").text
 						%br
-						%span.facet_number=article["url"].to_s.gsub("http://", "").gsub("https://", "").split('/')[0].gsub("www.","")
+						%span.facet_number=article.xpath("url").text.gsub("http://", "").gsub("https://", "").split('/')[0].gsub("www.","")
+
 - else
 	- if @gdata_image and @gdata_image.to_s.include? "zoom"
 		%p.book_cover
