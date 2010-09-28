@@ -1,5 +1,7 @@
 require 'gdata'
 require 'xmlsimple'
+require 'nokogiri'
+require 'open-uri'
 
 class CatalogController < ApplicationController
 
@@ -76,8 +78,9 @@ class CatalogController < ApplicationController
         @gdata_embeddability = REXML::XPath.first(gdata_doc, "//entry/gbs:embeddability")
         @gdata_viewability = REXML::XPath.first(gdata_doc, "//entry/gbs:viewability")
       end
+      @eulholding = parse_voyager_holding_details Nokogiri::HTML(open('http://catalogue.lib.ed.ac.uk/cgi-bin/Pwebrecon.cgi?DB=local&Search_Arg=isbn+'+@document[:isbn_t].last+'&Search_Code=CMD&CNT=25'))      
     end
-     
+
     @text_for_zemanta =  @gdata_description ?  @document[:opensearch_display].join(" ") + @gdata_description.text : @document[:opensearch_display].join(" ")
     @zemanta_suggestions_test = Net::HTTP.post_form(URI.parse(Blacklight.config[:data_augmentation][:zemanta][:endpoint]),
                               { 'method'=>'zemanta.suggest', 'api_key'=> Blacklight.config[:data_augmentation][:zemanta][:developer_key],
@@ -117,6 +120,19 @@ class CatalogController < ApplicationController
     setup_previous_document
     setup_next_document
     render :layout => "layouts/item"
+  end
+
+  def parse_voyager_holding_details(holding_details)
+    holding_details.xpath('//tr').collect { |node|
+      if !node.xpath('th/a').empty? and node.xpath('th/a').text=='Location (click for local info)'
+        {
+          :location => node.xpath('normalize-space(td)').gsub("STANDARD LOAN", "Standard Loan").gsub("SHORT LOAN", "Short Loan"),
+          :shelfmark => node.xpath('following-sibling::tr[th ="Shelfmark:"][1]/td').text.strip!,
+          :status => node.xpath('following-sibling::tr[th ="Status:"][1]/td').text.strip!.gsub("(Not Charged)","").downcase,
+          :copies => node.xpath('following-sibling::tr[th ="Number of Items:"][1]/td').text.strip!
+        }
+      end
+    }.compact
   end
 
 end

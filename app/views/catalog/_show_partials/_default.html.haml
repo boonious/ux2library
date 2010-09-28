@@ -61,4 +61,15 @@
 	- if @gdata_description
 		%p= @gdata_description.text
 
+	- if !@eulholding.empty?
+		%section#eulholding
+			%h5 Availability - Edinburgh University Library
+			%p
+				%ul
+					- @eulholding.each do |item|
+						%li
+							= item[:location] + ", " + item[:shelfmark] + " (shelfmark)"
+							%br
+							= item[:copies] + " item(s), " + item[:status]
+
 	%section#google_preview

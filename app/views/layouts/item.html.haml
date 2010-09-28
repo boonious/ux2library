@@ -11,9 +11,9 @@
 
 %link{:rel=>"stylesheet", :href=>"/stylesheets/surface.css", :type=>"text/css"}
 %link{:rel=>"stylesheet", :href=>"/stylesheets/layout.css", :type=>"text/css"}
- 
+
 - if @gdata_embeddability and @document[:isbn_t]
-	-if @gdata_embeddability.to_s.include?"http://schemas.google.com/books/2008#embeddable"
+	- if @gdata_embeddability.to_s.include?"http://schemas.google.com/books/2008#embeddable"
 		%script{:type=>"text/javascript", :src=>"http://www.google.com/jsapi"}
 		:javascript
 			google.load("books", "0");
