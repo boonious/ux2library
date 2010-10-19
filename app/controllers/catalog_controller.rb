@@ -24,35 +24,7 @@ class CatalogController < ApplicationController
     @filters = params[:f] || []
 
     if !(params[:q].blank? and params[:f].blank? and params[:search_field].blank?)
-      gdata_client = GData::Client::BookSearch.new
-      isbn_nos = @response.docs.select {|x| x["isbn_t"] }.collect {|x| x["isbn_t"][0]}
-      increments = 3
-
-      3.times { |t|
-        start_index = t*increments
-        end_index = t*increments + 2
-        if end_index > isbn_nos.size
-          break if start_index > isbn_nos.size
-          query_string = isbn_nos[start_index..-1].join("+OR+")
-          gdata_xml = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '?q=' + query_string).to_xml
-          gdata = REXML::XPath.each(gdata_xml, "//entry").collect { |entry|
-            isbn_node = entry.get_elements("dc:identifier[contains(.,'ISBN')]").first
-            embeddability_node = entry.get_elements("gbs:embeddability").first
-            [entry.get_elements("link").first.attribute("href").to_s, isbn_node ? isbn_node.text : "",  embeddability_node.attribute("value").to_s]
-          }
-          @gdata = @gdata.nil? ? gdata : @gdata + gdata # merge results to the calls
-          break
-        else
-          query_string = isbn_nos[start_index..end_index].join("+OR+")
-          gdata_xml = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '?q=' + query_string).to_xml
-          gdata = REXML::XPath.each(gdata_xml, "//entry").collect { |entry|
-            isbn_node = entry.get_elements("dc:identifier[contains(.,'ISBN')]").first
-            embeddability_node = entry.get_elements("gbs:embeddability").first
-            [entry.get_elements("link").first.attribute("href").to_s, isbn_node ? isbn_node.text : "", embeddability_node.attribute("value").to_s]
-          }
-          @gdata = @gdata.nil? ? gdata : @gdata + gdata  # merge results to the calls
-        end
-      }
+      get_gdata_for_result_list
     end
 
     respond_to do |format|
@@ -137,6 +109,38 @@ class CatalogController < ApplicationController
         }
       end
     }.compact
+  end
+
+  def get_gdata_for_result_list
+    gdata_client = GData::Client::BookSearch.new
+    isbn_nos = @response.docs.select {|x| x["isbn_t"] }.collect {|x| x["isbn_t"][0]}
+    increments = 3
+
+    3.times { |t|
+      start_index = t*increments
+      end_index = t*increments + 2
+      if end_index > isbn_nos.size
+        break if start_index > isbn_nos.size
+        query_string = isbn_nos[start_index..-1].join("+OR+")
+        gdata_xml = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '?q=' + query_string).to_xml
+        gdata = REXML::XPath.each(gdata_xml, "//entry").collect { |entry|
+          isbn_node = entry.get_elements("dc:identifier[contains(.,'ISBN')]").first
+          embeddability_node = entry.get_elements("gbs:embeddability").first
+          [entry.get_elements("link").first.attribute("href").to_s, isbn_node ? isbn_node.text : "",  embeddability_node.attribute("value").to_s]
+        }
+        @gdata = @gdata.nil? ? gdata : @gdata + gdata # merge results to the calls
+        break
+      else
+        query_string = isbn_nos[start_index..end_index].join("+OR+")
+        gdata_xml = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '?q=' + query_string).to_xml
+        gdata = REXML::XPath.each(gdata_xml, "//entry").collect { |entry|
+          isbn_node = entry.get_elements("dc:identifier[contains(.,'ISBN')]").first
+          embeddability_node = entry.get_elements("gbs:embeddability").first
+          [entry.get_elements("link").first.attribute("href").to_s, isbn_node ? isbn_node.text : "", embeddability_node.attribute("value").to_s]
+        }
+        @gdata = @gdata.nil? ? gdata : @gdata + gdata  # merge results to the calls
+      end
+    }
   end
 
 end
