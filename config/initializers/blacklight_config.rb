@@ -127,7 +127,7 @@ Blacklight.configure(:shared) do |config|
       "author_display"          => "Author:",
       "author_vern_display"     => "Author:",
       "format"                  => "Format:",
-      "pub_date"                 => "Year:"
+      "pub_date"                => "Year:"
     #  "language_facet"          => "Language:",
     #  "published_display"       => "Published:",
     #  "published_vern_display"  => "Published:",
@@ -202,9 +202,10 @@ Blacklight.configure(:shared) do |config|
   # If there are more than this many search results, no spelling ("did you 
   # mean") suggestion is offered.
   config[:spell_max] = 5
-
+  
   config[:data_augmentation] = {
-    :gdata => {
+    :enabled => true,
+    :gdata => { 
       :endpoint_book_search => 'http://books.google.com/books/feeds/volumes'
     },
     :zemanta => {

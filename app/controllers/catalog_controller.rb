@@ -23,7 +23,7 @@ class CatalogController < ApplicationController
     (@response, @document_list) = get_search_results
     @filters = params[:f] || []
 
-    if !(params[:q].blank? and params[:f].blank? and params[:search_field].blank?)
+    if Blacklight.config[:data_augmentation][:enabled] and !(params[:q].blank? and params[:f].blank? and params[:search_field].blank?)
       get_gdata_for_result_list
     end
 
