@@ -36,24 +36,12 @@ class CatalogController < ApplicationController
 
   def show
     @response, @document = get_solr_response_for_doc_id
-
-    if @document[:isbn_t]
-      gdata_client = GData::Client::BookSearch.new
-      doc = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '?q=' + @document[:isbn_t].last).to_xml
-      gdata_url_id = REXML::XPath.first(doc, "//entry/id")
-      if gdata_url_id
-        gdata_id = gdata_url_id.text.split("/feeds/volumes/").last
-        gdata_doc = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '/' + gdata_id).to_xml
-        @gdata_image = REXML::XPath.first(gdata_doc, "//entry/link/@href")
-        @gdata_description = REXML::XPath.first(gdata_doc, "//entry/dc:description")
-        @gdata_embeddability = REXML::XPath.first(gdata_doc, "//entry/gbs:embeddability")
-        @gdata_viewability = REXML::XPath.first(gdata_doc, "//entry/gbs:viewability")
-      end
-      @eulholding = parse_voyager_holding_details Nokogiri::HTML(open('http://catalogue.lib.ed.ac.uk/cgi-bin/Pwebrecon.cgi?DB=local&Search_Arg=isbn+'+@document[:isbn_t].last+'&Search_Code=CMD&CNT=25'))      
+    
+    if Blacklight.config[:data_augmentation][:enabled] 
+      get_gdata_eulholding_details if @document[:isbn_t]
+      @text_for_zemanta =  @gdata_description ?  @document[:opensearch_display].join(" ") + @gdata_description.text : @document[:opensearch_display].join(" ")
+      create_zemanta_suggestions @text_for_zemanta
     end
-
-    @text_for_zemanta =  @gdata_description ?  @document[:opensearch_display].join(" ") + @gdata_description.text : @document[:opensearch_display].join(" ")
-    create_zemanta_suggestions @text_for_zemanta
     
     respond_to do |format|
       format.html {setup_next_and_previous_documents}
@@ -141,6 +129,21 @@ class CatalogController < ApplicationController
         @gdata = @gdata.nil? ? gdata : @gdata + gdata  # merge results to the calls
       end
     }
+  end
+  
+  def get_gdata_eulholding_details
+    gdata_client = GData::Client::BookSearch.new
+    doc = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '?q=' + @document[:isbn_t].last).to_xml
+    gdata_url_id = REXML::XPath.first(doc, "//entry/id")
+    if gdata_url_id
+      gdata_id = gdata_url_id.text.split("/feeds/volumes/").last
+      gdata_doc = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '/' + gdata_id).to_xml
+      @gdata_image = REXML::XPath.first(gdata_doc, "//entry/link/@href")
+      @gdata_description = REXML::XPath.first(gdata_doc, "//entry/dc:description")
+      @gdata_embeddability = REXML::XPath.first(gdata_doc, "//entry/gbs:embeddability")
+      @gdata_viewability = REXML::XPath.first(gdata_doc, "//entry/gbs:viewability")
+    end
+    @eulholding = parse_voyager_holding_details Nokogiri::HTML(open('http://catalogue.lib.ed.ac.uk/cgi-bin/Pwebrecon.cgi?DB=local&Search_Arg=isbn+'+@document[:isbn_t].last+'&Search_Code=CMD&CNT=25'))
   end
 
 end
