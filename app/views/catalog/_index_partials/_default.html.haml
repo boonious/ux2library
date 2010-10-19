@@ -2,18 +2,38 @@
 	- if index_field_names.to_s.include? "author" and !document.get("author_display").nil?
 		- index_field_names.select {|name| name.include? "author"}.each do |solr_fname|
 			%span.author= h document.get(solr_fname)
+
 %p
 	- index_field_names.each do |solr_fname|
-		- if document.get solr_fname and !(solr_fname.include? "title" or solr_fname.include? "author")
+		- if document.get solr_fname and !(solr_fname.include? "title" or solr_fname.include? "author" or solr_fname.include? "pub_date")
 			-#= h index_field_labels[solr_fname]
 			- if index_field_names.rindex(solr_fname) + 1 != index_field_names.size
 				= h document.get(solr_fname).capitalize + ','
 			- else
 				= h document.get(solr_fname).capitalize
 
+	- if document["pub_date"] or document["date_display"]
+		- if document["date_display"]
+			%span.small.date
+				= document["date_display"][0].include?("T") ? document["date_display"][0][0..9] : document["date_display"]
+		- elsif document["pub_date"]
+			%span.small.date= document["pub_date"]
 
 - if document["isbn_t"] and @gdata
 	- @gdata_embeddability = @gdata.select {|gdata| gdata[1].include?(document["isbn_t"][0]) }[0]
 	- if @gdata_embeddability and @gdata_embeddability.to_s.include?("http://schemas.google.com/books/2008#embeddable")
 		%p
 			%i="preview"
+
+- if document["description_display"]
+	%section.snippet
+		= document["description_display"][0].split(/\s+/).length < 50 ? document["description_display"] : document["description_display"][0].split(/\s+/)[0..50].join(" ") + "..."
+
+- if document["identifier_display"]
+	%p.small
+		- http_links = document["identifier_display"].select {|link| link.match(/^http:/)}
+		- http_links.each_with_index do |link, index|
+			- link_without_http = link.match(/^https:/) ? link.split('https://')[1] : link.split('http://')[1]
+			- link_text = link_without_http[0..18] + '...' + link_without_http[-8..-1]
+			= link_to link_text, link, :title => link, :class => "document_list_link"
+			= "; " if index + 1 < http_links.size
