@@ -27,7 +27,8 @@
 
 - if document["description_display"]
 	%section.snippet
-		= document["description_display"][0].split(/\s+/).length < 50 ? document["description_display"] : document["description_display"][0].split(/\s+/)[0..50].join(" ") + "..."
+		- sanatized_text_array = strip_tags(strip_links(document["description_display"][0])).split(/\s+/)
+		= sanatized_text_array.length < 50 ? sanatized_text_array.join(" ") : sanatized_text_array[0..50].join(" ") + "..."
 
 - if document["identifier_display"]
 	%p.small
