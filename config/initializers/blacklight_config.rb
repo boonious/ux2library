@@ -70,18 +70,20 @@ Blacklight.configure(:shared) do |config|
       "pub_date",
       "author_facet",
       "subject_topic_facet",
-     # "language_facet",
+      "mimetype_facet",
+      "language_facet",
      # "lc_1letter_facet",
      # "subject_geo_facet",
      # "subject_era_facet"
     ]),
     :labels => {
       "library_facet"       => "Library",
-      "format"              => "Format",
+      "format"              => "Type",
       "pub_date"            => "Year",
       "author_facet"        => "Author",
       "subject_topic_facet" => "Topic",
-     # "language_facet"      => "Language",
+      "mimetype_facet"      => "Technical Format",
+      "language_facet"      => "Language",
      # "lc_1letter_facet"    => "Call Number",
      # "subject_era_facet"   => "Era",
      # "subject_geo_facet"   => "Region"
