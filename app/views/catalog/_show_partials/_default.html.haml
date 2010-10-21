@@ -67,9 +67,6 @@
 						%dt.metadata_label= document_show_field_labels[solr_fname]
 						%dd.metadata_value= document[solr_fname]
 
-	- if @gdata_description
-		%p= @gdata_description.text
-
 	- if document["identifier_display"]
 		-if document["identifier_display"].to_s.include?("http")
 			%dl
@@ -81,7 +78,9 @@
 							- link_text = link.size < 88 ? link : link[0..55] + "..." + link[-18..-1]
 							%li.small= link_to link_text, link, :title => link, :class => "document_list_link"
 
-	- if document["description_display"]
+	- if @gdata_description
+		%p= @gdata_description.text
+	- elsif document["description_display"]
 		%p= document["description_display"][0]
 	
 	- if @eulholding
