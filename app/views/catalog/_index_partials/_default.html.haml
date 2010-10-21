@@ -32,7 +32,7 @@
 
 - if document["identifier_display"]
 	%p.small
-		- http_links = document["identifier_display"].select {|link| link.match(/^http:/)}
+		- http_links = document["identifier_display"].select {|link| link.match(/^http/)}
 		- http_links.each_with_index do |link, index|
 			- link_without_http = link.match(/^https:/) ? link.split('https://')[1] : link.split('http://')[1]
 			- link_text = link_without_http[0..18] + '...' + link_without_http[-8..-1]

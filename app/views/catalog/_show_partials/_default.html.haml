@@ -73,10 +73,10 @@
 	- if document["identifier_display"]
 		-if document["identifier_display"].to_s.include?("http")
 			%dl
-				%dt.metadata_label= "Files"
+				%dt.metadata_label= "Links, Files:"
 				%dd.metadata_value
 					%ul.files_list
-						- http_links = document["identifier_display"].select {|link| link.match(/^http:/)}
+						- http_links = document["identifier_display"].select {|link| link.match(/^http/)}
 						- http_links.each_with_index do |link, index|
 							- link_text = link.size < 88 ? link : link[0..55] + "..." + link[-18..-1]
 							%li.small= link_to link_text, link, :title => link, :class => "document_list_link"
@@ -96,4 +96,32 @@
 								%br
 								= item[:copies] + " item(s), " + item[:status]
 
+						
+	%section#custom_preview
+		- if document["shockwave_display"]
+			%p
+				%iframe{:src=>document["shockwave_display"][0], :style=>"width:600px; height:700px;", :frameborder=>"0"}
+		- elsif document["mp3_display"]
+			%p
+				%iframe{:src=>document["mp3_display"][0], :style=>"width:600px; height:40px;", :frameborder=>"0"}
+				
+		- if document["pdf_display"]
+			%p
+				- link_text = "http://docs.google.com/gview?embedded=true&url=" + document["pdf_display"][0]
+				%iframe{:src=>link_text, :style=>"width:600px; height:700px;", :frameborder=>"0"}
+		- elsif document["mspowerpoint_display"]
+			%p
+				- link_text = "http://docs.google.com/gview?embedded=true&url=" + document["mspowerpoint_display"][0]
+				%iframe{:src=>link_text, :style=>"width:600px; height:500px;", :frameborder=>"0"}
+		- elsif document["msword_display"]
+			%p
+				- link_text = "http://docs.google.com/gview?embedded=true&url=" + document["msword_display"][0]
+				%iframe{:src=>link_text, :style=>"width:600px; height:500px;", :frameborder=>"0"}
+		- elsif document["web_display"]
+			%p
+				- link_text = "http://docs.google.com/gview?embedded=true&url="
+				%iframe{:src=>document["web_display"][0], :style=>"width:600px; height:500px;", :frameborder=>"0"}
+
 	%section#google_preview
+	
+	
