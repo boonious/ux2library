@@ -100,27 +100,27 @@
 	%section#custom_preview
 		- if document["shockwave_display"]
 			%p
-				%iframe{:src=>document["shockwave_display"][0], :style=>"width:600px; height:700px;", :frameborder=>"0"}
+				%iframe{:src=>document["shockwave_display"][0], :class=>"google_viewer", :frameborder=>"0"}
 		- elsif document["mp3_display"]
 			%p
-				%iframe{:src=>document["mp3_display"][0], :style=>"width:600px; height:40px;", :frameborder=>"0"}
+				%iframe{:src=>document["mp3_display"][0], :class=>"google_viewer_audio", :frameborder=>"0"}
 				
 		- if document["pdf_display"]
 			%p
 				- link_text = "http://docs.google.com/gview?embedded=true&url=" + document["pdf_display"][0]
-				%iframe{:src=>link_text, :style=>"width:600px; height:700px;", :frameborder=>"0"}
+				%iframe{:src=>link_text, :class=>"google_viewer", :frameborder=>"0"}
 		- elsif document["mspowerpoint_display"]
 			%p
 				- link_text = "http://docs.google.com/gview?embedded=true&url=" + document["mspowerpoint_display"][0]
-				%iframe{:src=>link_text, :style=>"width:600px; height:500px;", :frameborder=>"0"}
+				%iframe{:src=>link_text, :class=>"google_viewer", :frameborder=>"0"}
 		- elsif document["msword_display"]
 			%p
 				- link_text = "http://docs.google.com/gview?embedded=true&url=" + document["msword_display"][0]
-				%iframe{:src=>link_text, :style=>"width:600px; height:500px;", :frameborder=>"0"}
+				%iframe{:src=>link_text, :class=>"google_viewer", :frameborder=>"0"}
 		- elsif document["web_display"]
 			%p
 				- link_text = "http://docs.google.com/gview?embedded=true&url="
-				%iframe{:src=>document["web_display"][0], :style=>"width:600px; height:500px;", :frameborder=>"0"}
+				%iframe{:src=>document["web_display"][0], :class=>"google_viewer", :frameborder=>"0"}
 
 	%section#google_preview
 	
