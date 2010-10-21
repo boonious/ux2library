@@ -38,6 +38,13 @@
 					&#9632;
 	%p
 		%dl
+			- if document["date_display"]
+				%dt.metadata_label= "Date"
+				%dd.metadata_value= document["date_display"][0]
+			- elsif document["pub_date"]
+				%dt.metadata_label= "Date"
+				%dd.metadata_value= document["pub_date"][0]
+				
 			- document_show_fields.each do |solr_fname|
 				- if document[solr_fname] and !(solr_fname.include? "title" or solr_fname.include? "author")
 					- if document[solr_fname].is_a?(Array)
@@ -59,10 +66,24 @@
 					- else
 						%dt.metadata_label= document_show_field_labels[solr_fname]
 						%dd.metadata_value= document[solr_fname]
-	
+
 	- if @gdata_description
 		%p= @gdata_description.text
 
+	- if document["identifier_display"]
+		-if document["identifier_display"].to_s.include?("http")
+			%dl
+				%dt.metadata_label= "Files"
+				%dd.metadata_value
+					%ul.files_list
+						- http_links = document["identifier_display"].select {|link| link.match(/^http:/)}
+						- http_links.each_with_index do |link, index|
+							- link_text = link.size < 88 ? link : link[0..55] + "..." + link[-18..-1]
+							%li.small= link_to link_text, link, :title => link, :class => "document_list_link"
+
+	- if document["description_display"]
+		%p= document["description_display"][0]
+	
 	- if @eulholding
 		- if !@eulholding.empty?
 			%section#eulholding
