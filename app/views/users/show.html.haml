@@ -1,0 +1,26 @@
+%section#commons
+	%section#login
+		%h5 Your Account
+		%p
+			%dl
+				%dt.common_label Login ID
+				%dd.common_value= current_user.login
+				%br
+				%dt.common_label Last Login
+				%dd.common_value= current_user.last_login_at
+				/
+					- if current_user.last_search_url
+						%dt.common_label Last Search
+						%dd.common_value= link_to 'view', catalog_index_path(current_user.last_search_url)
+				%br
+				%dt.common_label Bookmarks
+				%dd.common_value= link_to 'view', bookmarks_path
+				%br		
+				%dt.common_label Checkout Items
+				%dd.common_value None
+				%br
+				%dt.common_label On Hold
+				%dd.common_value None
+				%br
+				%dt.common_label Fines and Charges
+				%dd.common_value None

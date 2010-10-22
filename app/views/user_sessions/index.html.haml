@@ -1,0 +1,7 @@
+%section#commons
+	%section#login
+		%h5 Login
+		= render :partial=>'login_form' 
+		%p
+			Don't have an account?
+			= link_to 'Create one', new_user_path

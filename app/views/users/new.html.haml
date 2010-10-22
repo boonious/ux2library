@@ -1,0 +1,23 @@
+%section#commons
+	%section#login
+		%h5 Signup
+		- form_for(@user, :url => user_path) do |f|
+			%fieldset
+				%p
+					= f.label :login, "Username"
+					%br
+					= f.text_field :login
+				%p
+					= f.label :email
+					%br
+					= f.text_field :email
+				%p
+					= f.label :password 
+					%br
+					= f.password_field :password
+				%p 
+					= f.label :password_confirmation, "Confirm Password"
+					%br
+					= f.password_field :password_confirmation
+				%p
+					= f.submit 'Create Account', :class => "button"	
