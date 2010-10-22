@@ -20,6 +20,7 @@
 					%li= link_to 'Home', root_path
 					%li= link_to 'JISC UX2.0', 'http://ux2.nesc.ed.ac.uk'
 					-#%li= link_to 'Library', root_path
+					%li= link_to "Search History", search_history_index_path
 			%section#right_header_menu
 				= render :partial=>'/user_util_links'
 		= render :partial=>'/flash_msg'
