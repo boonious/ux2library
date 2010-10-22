@@ -1,0 +1,21 @@
+%section#commons
+	%section#bookmarks
+		%h5 Saved Searches
+		
+		- if current_user.blank? 
+			%p Please log in to see your saved searches
+		
+		- elsif @searches.blank?
+			%p You have no saved searches
+			
+		- else
+			%p= link_to "Clear Saved Searches", clear_saved_searches_path, :method => :delete, :confirm => "Clear your saved searches?"
+			%p
+				%ul
+					- @searches.each do |search|
+						%li
+							= link_to_previous_search(search.query_params)
+							%span.small
+							[
+							= link_to "delete", saved_search_path(search), :method => :delete, :confirm => "Delete item?", :class=>"small document_list_link"
+							]

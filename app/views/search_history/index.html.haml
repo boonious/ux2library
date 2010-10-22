@@ -1,0 +1,22 @@
+%section#commons
+	%section#bookmarks
+		%h5 Search History
+		
+		- if @searches.blank? 
+			%p You have no search history
+			
+		- else
+			%p
+				= link_to "Clear Search History", clear_search_history_path, :method => :delete, :confirm => "Clear your search history?"
+			%p
+				%ul
+					- @searches.each_with_index do |search,index|
+						- content_tag :tr, :id => "document_#{index + 1}" do
+							%li
+								= link_to_previous_search(search.query_params)
+								- if current_user && search.saved?
+									= link_to "[saved]", saved_search_path(search.id), :method => :delete, :class=>"small document_list_link" 
+								- else 
+									= link_to "save", save_saved_search_path(search.id), :method => :put, :class=>"small document_list_link"
+								%span
+									= link_to "delete", search_history_path(search.id), :method => :delete, :confirm => "Delete item?", :class=>"small document_list_link"
