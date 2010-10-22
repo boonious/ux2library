@@ -8,5 +8,3 @@
 		= f.hidden_field(:document_id, :value => h(document[:id]))
 		= f.hidden_field(:title, :value => h(document[document_show_link_field]))
 		= f.submit 'bookmark this', :id => "user_submit_#{document[:id]}", :class=>"bookmark_button"
--else
-	&nbsp;
