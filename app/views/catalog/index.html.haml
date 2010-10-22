@@ -8,9 +8,9 @@
 		= render 'constraints', :localized_params=>params
 	
 		%nav.pagination
+			-#= render 'sort_and_per_page'
 			= will_paginate @response.docs, :container => false
 	
-		-#= render 'sort_and_per_page'
 		= render :partial=>'document_list'
 		
 		%nav.pagination

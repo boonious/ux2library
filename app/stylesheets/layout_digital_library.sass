@@ -5,11 +5,26 @@
 	margin: $baseline_grid_size 0 $baseline_grid_size 0
 	overflow: auto
 
+#sort_results
+	+column(5)
+	float: right
+
 #google_preview
 	+column(20)
 	height: $baseline_grid_size * 38
 	margin-top: $baseline_grid_size * 2
+
+#custom_preview
+	margin-top: $baseline_grid_size * 2
 	
+.google_viewer
+	+column(20)
+	height: $baseline_grid_size * 38
+
+.google_viewer_audio
+	+column(20)
+	height: $baseline_grid_size * 3
+
 .facet_limit
 	+horizontal_list
 	li:first-child
@@ -24,15 +39,15 @@
 	+column(3)
 	margin: $baseline_grid_size 0 $baseline_grid_size 0
 
-.metadata_label
+.common_label
 	+column(3)
 
-.metadata_value
+.common_value
 	margin-left: ($blueprint_grid_width + $blueprint_grid_margin)*3
 	
-.metadata_value_wider
+.common_value_wider
 	margin-left: ($blueprint_grid_width + $blueprint_grid_margin)*8
-
+	
 .snippet
 	margin-top: $baseline_grid_size * 0.5
 	margin-bottom: $baseline_grid_size * 0.5
@@ -42,11 +57,24 @@
 	margin-left: 0
 	padding-left: $blueprint_grid_width
 
-.google_viewer
-	+column(20)
-	height: $baseline_grid_size * 42
-	
-.google_viewer_audio
-	+column(20)
-	height: $baseline_grid_size * 3
+#login
+	margin-top: $baseline_grid_size
 
+#bookmarks li
+	margin-top: $baseline_grid_size
+	
+.bookmark_button
+	margin-top: $baseline_grid_size * 0.5
+	background-color: #eee
+	border-color: #777
+	border-style: solid
+	border-width: 1px
+	padding: 4px
+	font-size: 78%
+	
+.document_overview
+	+column(16)
+	
+.bookmarks_control
+	+column(4,true)	
+	

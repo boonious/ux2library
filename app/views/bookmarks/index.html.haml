@@ -1,0 +1,36 @@
+%section#commons
+	%section#bookmarks
+		%h5 Bookmarks
+		
+		- if current_user.blank?
+			%p Please log in to see your bookmarks.
+		
+		- elsif @bookmarks.blank? 
+			%p You have no bookmarks
+		
+		- else
+			/	
+				-	if params[:tag]
+				%p
+					Showing
+					= h params[:tag]
+					tagged items.
+					Show
+					= link_to 'all', bookmarks_path
+				
+			= will_paginate(@bookmarks)
+			%p= link_to "Clear Bookmarks", clear_bookmarks_path, :method => :delete, :confirm => "Clear your bookmarks?"
+			
+			%p
+				%ul
+					- @bookmarks.each do |bm|
+						%li
+							= link_to h(bm.title), catalog_path(bm.document_id)
+							%span.small
+								[
+								= link_to 'note', edit_bookmark_path(bm), :class=>"small document_list_link"
+								|
+								= link_to 'remove', bookmark_path(bm), :method => :delete, :confirm => 'Remove this bookmark?', :class=>"small document_list_link"
+								]
+								-if bm.notes
+									= bm.notes

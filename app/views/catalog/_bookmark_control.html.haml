@@ -1,0 +1,12 @@
+-if current_user and current_user.document_is_bookmarked? document[:id]
+	%span
+		This item is in your
+		= link_to 'bookmarks', bookmarks_path
+-elsif current_user
+	- @bookmark ||= Bookmark.new
+	- form_for(@bookmark) do |f|
+		= f.hidden_field(:document_id, :value => h(document[:id]))
+		= f.hidden_field(:title, :value => h(document[document_show_link_field]))
+		= f.submit 'bookmark this', :id => "user_submit_#{document[:id]}", :class=>"bookmark_button"
+-else
+	&nbsp;

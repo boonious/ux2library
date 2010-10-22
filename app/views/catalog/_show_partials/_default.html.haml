@@ -39,39 +39,39 @@
 	%p
 		%dl
 			- if document["date_display"]
-				%dt.metadata_label= "Date"
-				%dd.metadata_value= document["date_display"][0]
+				%dt.common_label= "Date"
+				%dd.common_value= document["date_display"][0]
 			- elsif document["pub_date"]
-				%dt.metadata_label= "Date"
-				%dd.metadata_value= document["pub_date"][0]
+				%dt.common_label= "Date"
+				%dd.common_value= document["pub_date"][0]
 				
 			- document_show_fields.each do |solr_fname|
 				- if document[solr_fname] and !(solr_fname.include? "title" or solr_fname.include? "author")
 					- if document[solr_fname].is_a?(Array)
-						%dt.metadata_label= document_show_field_labels[solr_fname]
+						%dt.common_label= document_show_field_labels[solr_fname]
 						- if @gdata_image and @gdata_image.to_s.include? "zoom"
-							%dd.metadata_value_wider
+							%dd.common_value_wider
 								- number_of_items = document[solr_fname].size
 								- document[solr_fname].each_with_index do |val, index|
 									= link_to_new_facet_query(solr_fname, val)
 									- if index + 1 < number_of_items
 										&#9632;
 						- else
-							%dd.metadata_value
+							%dd.common_value
 								- number_of_items = document[solr_fname].size
 								- document[solr_fname].each_with_index do |val, index|
 									= link_to_new_facet_query(solr_fname, val)
 									- if index + 1 < number_of_items
 										&#9632;
 					- else
-						%dt.metadata_label= document_show_field_labels[solr_fname]
-						%dd.metadata_value= document[solr_fname]
+						%dt.common_label= document_show_field_labels[solr_fname]
+						%dd.common_value= document[solr_fname]
 
 	- if document["identifier_display"]
 		-if document["identifier_display"].to_s.include?("http")
 			%dl
-				%dt.metadata_label= "Links, Files:"
-				%dd.metadata_value
+				%dt.common_label= "Links, Files:"
+				%dd.common_value
 					%ul.files_list
 						- http_links = document["identifier_display"].select {|link| link.match(/^http/)}
 						- http_links.each_with_index do |link, index|
@@ -94,33 +94,31 @@
 								= item[:location] + ", " + item[:shelfmark] + " (shelfmark)"
 								%br
 								= item[:copies] + " item(s), " + item[:status]
-
-						
-	%section#custom_preview
-		- if document["shockwave_display"]
-			%p
-				%iframe{:src=>document["shockwave_display"][0], :class=>"google_viewer", :frameborder=>"0"}
-		- elsif document["mp3_display"]
-			%p
-				%iframe{:src=>document["mp3_display"][0], :class=>"google_viewer_audio", :frameborder=>"0"}
+	
+	- if !@gdata_embeddability
+		%section#custom_preview
+			- if document["shockwave_display"]
+				%p
+					%iframe{:src=>document["shockwave_display"][0], :class=>"google_viewer", :frameborder=>"0"}
+			- elsif document["mp3_display"]
+				%p
+					%iframe{:src=>document["mp3_display"][0], :class=>"google_viewer_audio", :frameborder=>"0"}
 				
-		- if document["pdf_display"]
-			%p
-				- link_text = "http://docs.google.com/gview?embedded=true&url=" + document["pdf_display"][0]
-				%iframe{:src=>link_text, :class=>"google_viewer", :frameborder=>"0"}
-		- elsif document["mspowerpoint_display"]
-			%p
-				- link_text = "http://docs.google.com/gview?embedded=true&url=" + document["mspowerpoint_display"][0]
-				%iframe{:src=>link_text, :class=>"google_viewer", :frameborder=>"0"}
-		- elsif document["msword_display"]
-			%p
-				- link_text = "http://docs.google.com/gview?embedded=true&url=" + document["msword_display"][0]
-				%iframe{:src=>link_text, :class=>"google_viewer", :frameborder=>"0"}
-		- elsif document["web_display"]
-			%p
-				- link_text = "http://docs.google.com/gview?embedded=true&url="
-				%iframe{:src=>document["web_display"][0], :class=>"google_viewer", :frameborder=>"0"}
-
+			- if document["pdf_display"]
+				%p
+					- link_text = "http://docs.google.com/gview?embedded=true&url=" + document["pdf_display"][0]
+					%iframe{:src=>link_text, :class=>"google_viewer", :frameborder=>"0"}
+			- elsif document["mspowerpoint_display"]
+				%p
+					- link_text = "http://docs.google.com/gview?embedded=true&url=" + document["mspowerpoint_display"][0]
+					%iframe{:src=>link_text, :class=>"google_viewer", :frameborder=>"0"}
+			- elsif document["msword_display"]
+				%p
+					- link_text = "http://docs.google.com/gview?embedded=true&url=" + document["msword_display"][0]
+					%iframe{:src=>link_text, :class=>"google_viewer", :frameborder=>"0"}
+			- elsif document["web_display"]
+				%p
+					- link_text = "http://docs.google.com/gview?embedded=true&url="
+					%iframe{:src=>document["web_display"][0], :class=>"google_viewer", :frameborder=>"0"}
+					
 	%section#google_preview
-	
-	

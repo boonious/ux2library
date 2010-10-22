@@ -1,0 +1,7 @@
+%section#sort_results
+	- unless @response.response['numFound'] < 2
+		- form_tag params[:controller] == "folder" ? folder_index_path : catalog_index_path, :method=>:get, :class=>'sort', :id => "sort_form" do
+			= label_tag(:sort, "Sort by ")
+			= select_tag(:sort, options_for_select(sort_fields, h(params[:sort])), :onchange => 'this.form.submit()')
+			= search_as_hidden_fields(:omit_keys => [:page, :sort])
+			%noscript= submit_tag 'sort results'
