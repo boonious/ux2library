@@ -11,13 +11,12 @@
 		- else
 			/	
 				-	if params[:tag]
-				%p
-					Showing
-					= h params[:tag]
-					tagged items.
-					Show
-					= link_to 'all', bookmarks_path
-				
+					%p
+						Showing
+						= h params[:tag]
+						tagged items.
+						Show
+						= link_to 'all', bookmarks_path
 			= will_paginate(@bookmarks)
 			%p= link_to "Clear Bookmarks", clear_bookmarks_path, :method => :delete, :confirm => "Clear your bookmarks?"
 			
