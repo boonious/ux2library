@@ -77,7 +77,9 @@
 						- http_links.each_with_index do |link, index|
 							- link_text = link.size < 88 ? link : link[0..55] + "..." + link[-18..-1]
 							%li.small= link_to link_text, link, :title => link, :class => "document_list_link"
-
+	
+	= render :partial=>'bookmark_control', :locals=>{:document=>document}
+	
 	- if @gdata_description
 		%p= @gdata_description.text
 	- elsif document["description_display"]
