@@ -3,10 +3,14 @@
 		%h5 Bookmarks
 		
 		- if current_user.blank?
-			%p Please log in to see your bookmarks.
+			%p 
+				Please log in to see your bookmarks.
+				= link_back_to_catalog :label=>"Back"
 		
 		- elsif @bookmarks.blank? 
-			%p You have no bookmarks
+			%p 
+				You have no bookmarks.
+				= link_back_to_catalog :label=>"Back"
 		
 		- else
 			/	
@@ -18,8 +22,10 @@
 						Show
 						= link_to 'all', bookmarks_path
 			= will_paginate(@bookmarks)
-			%p= link_to "Clear Bookmarks", clear_bookmarks_path, :method => :delete, :confirm => "Clear your bookmarks?"
-			
+			%p
+				= link_to "Clear Bookmarks", clear_bookmarks_path, :method => :delete, :confirm => "Clear your bookmarks?"
+				|
+				= link_back_to_catalog :label=>"Back"
 			%p
 				%ul
 					- @bookmarks.each do |bm|

@@ -3,13 +3,20 @@
 		%h5 Saved Searches
 		
 		- if current_user.blank? 
-			%p Please log in to see your saved searches
+			%p 
+				Please log in to see your saved searches.
+				= link_back_to_catalog :label=>"Back"
 		
 		- elsif @searches.blank?
-			%p You have no saved searches
+			%p 
+				You have no saved searches.
+				= link_back_to_catalog :label=>"Back"
 			
 		- else
-			%p= link_to "Clear Saved Searches", clear_saved_searches_path, :method => :delete, :confirm => "Clear your saved searches?"
+			%p
+				= link_to "Clear Saved Searches", clear_saved_searches_path, :method => :delete, :confirm => "Clear your saved searches?"
+				|
+				= link_back_to_catalog :label=>"Back"
 			%p
 				%ul
 					- @searches.each do |search|
@@ -19,3 +26,4 @@
 							[
 							= link_to "delete", saved_search_path(search), :method => :delete, :confirm => "Delete item?", :class=>"small document_list_link"
 							]
+						

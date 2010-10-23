@@ -3,11 +3,14 @@
 		%h5 Search History
 		
 		- if @searches.blank? 
-			%p You have no search history
-			
+			%p 
+				You have no search history.
+				= link_back_to_catalog :label=>"Back"
 		- else
 			%p
 				= link_to "Clear Search History", clear_search_history_path, :method => :delete, :confirm => "Clear your search history?"
+				|
+				= link_back_to_catalog :label=>"Back"
 			%p
 				%ul
 					- @searches.each_with_index do |search,index|
