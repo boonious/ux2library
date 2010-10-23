@@ -70,7 +70,7 @@ module ApplicationHelper
   # cf. Blacklight, add span to display the item hits differently
   def render_facet_value(facet_solr_field, item, options ={})
     facet_number_tag =  content_tag(:span, format_num(item.hits), :class => "facet_number")
-    link_to_unless(options[:suppress_link], item.value, add_facet_params_and_redirect(facet_solr_field, item.value), :class=>"facet_select") + facet_number_tag
+    link_to_unless(options[:suppress_link], item.value, "/catalog"+ add_facet_params_and_redirect(facet_solr_field, item.value), :class=>"facet_select") + facet_number_tag
   end
 
   # cf. Blacklight, remove facet from Dictionary Hash which preserves URL parameters ordering

@@ -55,6 +55,21 @@ class CatalogController < ApplicationController
     end
   end
   
+  def facet_list_limit
+    if params[:id].include? "pub_date" 
+      170
+    else 
+      80
+    end
+  end
+  
+  def facet
+     if !params.has_key?("catalog_facet.sort") and (params[:id].include? "pub_date" or params[:id].include? "format" or params[:id].include? "mimetype_facet")
+       params.merge!({:"catalog_facet.sort"=>"index"})
+     end
+     @pagination = get_facet_pagination(params[:id], params)
+   end
+
   protected
 
   # remember URL params (ordered) in session for URL reconstruction later

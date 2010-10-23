@@ -96,7 +96,12 @@ Blacklight.configure(:shared) do |config|
     # #solr_search_params will do the "add one" itself, if neccesary.
     :limits => {
       nil => 10,
-      "subject_facet" => 20
+      "format"              => 10,
+      "pub_date"            => 10,
+      "author_facet"        => 10,
+      "subject_topic_facet" => 10,
+      "mimetype_facet"      => 10,
+      "language_facet"      => 10,
     }
   }
 
