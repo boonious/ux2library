@@ -1,2 +1,5 @@
+- if params[:q] or params[:f]
+	%h4 Refine
+
 - facet_field_names.each do |solr_fname|
-		= render_facet_limit(solr_fname)
+	= render_facet_limit(solr_fname)

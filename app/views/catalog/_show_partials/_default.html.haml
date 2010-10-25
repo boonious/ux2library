@@ -1,6 +1,9 @@
 - if mode == :sidebar
 	= render :partial=>'home_text'
 	
+	- if @zemanta_unique_link_types or @zemanta_articles 
+		%h4 Other Links
+	
 	- if @zemanta_unique_link_types
 		- @zemanta_unique_link_types.each do |link_type|
 			%section.facet_limit
