@@ -66,6 +66,8 @@ class CatalogController < ApplicationController
   def facet
      if !params.has_key?("catalog_facet.sort") and (params[:id].include? "pub_date" or params[:id].include? "format" or params[:id].include? "mimetype_facet")
        params.merge!({:"catalog_facet.sort"=>"index"})
+     elsif !params.has_key?("catalog_facet.sort") and (params[:id].include? "author_facet" or params[:id].include? "subject_topic_facet")
+       params.merge!({:"catalog_facet.sort"=>"index"}) # a-z sort for the time being
      end
      @pagination = get_facet_pagination(params[:id], params)
    end
