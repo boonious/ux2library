@@ -202,7 +202,8 @@ Blacklight.configure(:shared) do |config|
   # label is key, solr field is value
   config[:sort_fields] ||= []
   config[:sort_fields] << ['relevance', 'score desc, pub_date_sort desc, title_sort asc']
-  config[:sort_fields] << ['year', 'pub_date_sort desc, title_sort asc']
+  config[:sort_fields] << ['year, recent', 'pub_date_sort desc, title_sort asc']
+  config[:sort_fields] << ['year, earlier', 'pub_date_sort asc, title_sort asc']
   config[:sort_fields] << ['author', 'author_sort asc, title_sort asc']
   config[:sort_fields] << ['title', 'title_sort asc, pub_date_sort desc']
   
