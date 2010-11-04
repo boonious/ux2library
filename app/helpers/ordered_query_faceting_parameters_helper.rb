@@ -64,7 +64,7 @@ module OrderedQueryFacetingParametersHelper
       if key.include?("q") or key.include?("search_field") 
         url_queries = url_queries + key +"="+item[1] + "&"
       else
-        url_queries = url_queries + "f"+ CGI::escape("["+key+"][]")+"="+item[1] + "&"
+        url_queries = url_queries + "f"+ CGI::escape("["+key+"][]")+"="+item[1] + "&" unless key.include? Blacklight.config[:facet][:a_to_z][:common_key_name]
       end
     }
     url_queries.chomp("&")
