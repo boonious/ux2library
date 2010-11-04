@@ -5,6 +5,8 @@ require 'open-uri'
 class CatalogController < ApplicationController
 
   include OrderedQueryFacetingParametersHelper
+  include Blacklight::SolrHelper
+  
   before_filter :delete_or_assign_orderly_search_session_params,  :only=>:index
 
   # Incorporate code for call Google book search API up to 4 times to retrieve book covers using a
@@ -64,13 +66,92 @@ class CatalogController < ApplicationController
   end
   
   def facet
-     if !params.has_key?("catalog_facet.sort") and (params[:id].include? "pub_date" or params[:id].include? "format" or params[:id].include? "mimetype_facet")
+    if !params.has_key?("catalog_facet.sort") and (params[:id].include? "pub_date" or params[:id].include? "format" or params[:id].include? "mimetype_facet")
        params.merge!({:"catalog_facet.sort"=>"index"})
-     elsif !params.has_key?("catalog_facet.sort") and (params[:id].include? "author_facet" or params[:id].include? "subject_topic_facet")
-       params.merge!({:"catalog_facet.sort"=>"index"}) # a-z sort for the time being
-     end
-     @pagination = get_facet_pagination(params[:id], params)
-   end
+    elsif !params.has_key?("catalog_facet.sort") and (params[:id].include? "author_facet" or params[:id].include? "subject_topic_facet")
+      params.merge!({:"catalog_facet.sort"=>"index"}) # a-z sort for the time being
+    end
+    @pagination = get_facet_pagination(params[:id], params)
+  end
+  
+  # Blacklight solr_helper method override for a,b,..z alphabetic
+  # range faceting navigation, to contruct the appropriate
+  # solr_params to retrieve the additional a-z facets (if)
+  def solr_facet_params(facet_field, extra_controller_params={})
+    input = params.deep_merge(extra_controller_params)
+    solr_params = solr_search_params(extra_controller_params)
+    
+    # add additional facet.field parameter to retrieve any a-z facets
+    # e.g. solr_params[:"facet.field"] = [author_facet, "author_first_letter"]
+    if Blacklight.config[:facet][:a_to_z].has_key? facet_field
+      solr_params[:"facet.field"] = [facet_field, Blacklight.config[:facet][:a_to_z][facet_field]] 
+    else
+      solr_params[:"facet.field"] = facet_field
+    end
+    
+    solr_params[:"f.#{facet_field}.facet.limit"] = 
+      if solr_params["facet.limit"] 
+        solr_params["facet.limit"] + 1
+      elsif respond_to?(:facet_list_limit)
+        facet_list_limit.to_s.to_i + 1
+      else
+        20 + 1
+      end
+    # use facet.prefix to filter out outliers not corresponding a particular alphabet facet
+    solr_params['facet.prefix'] = extra_controller_params[:"catalog_facet.prefix"].upcase if extra_controller_params.has_key?("catalog_facet.prefix") 
+    solr_params['facet.offset'] = input[  Blacklight::Solr::FacetPaginator.request_keys[:offset]  ].to_i
+    solr_params['facet.sort'] = input[  Blacklight::Solr::FacetPaginator.request_keys[:sort] ]     
+    solr_params[:rows] = 0
+    
+    return solr_params
+  end
+  
+  # Blacklight solr_helper method override for a,b,..z alphabetic
+  # range faceting navigation, to contruct either a facet 
+  # paginator or a hash consisting two facet paginators 
+  # (the intended facets + the a-z facets)
+  def get_facet_pagination(facet_field, extra_controller_params={})
+    solr_params = solr_facet_params(facet_field, extra_controller_params)
+    response = Blacklight.solr.find(solr_params)
+
+    limit =       
+      if respond_to?(:facet_list_limit)
+        facet_list_limit.to_s.to_i
+      elsif solr_params[:"f.#{facet_field}.facet.limit"]
+        solr_params[:"f.#{facet_field}.facet.limit"] - 1
+      else
+        nil
+      end
+      
+    intended_facets = response.facets.select {|facet| facet.name.include?(facet_field)}.first.items
+    intended_paginator = Blacklight::Solr::FacetPaginator.new(intended_facets, 
+        :prefix => solr_params['facet.prefix'],
+        :offset => solr_params['facet.offset'],
+        :limit => limit,
+        :sort => response["responseHeader"]["params"]["f.#{facet_field}.facet.sort"] || response["responseHeader"]["params"]["facet.sort"]
+    )
+
+    if Blacklight.config[:facet][:a_to_z].has_key? facet_field
+      extra_controller_params.delete(Blacklight.config[:facet][:a_to_z][facet_field])
+      prefix = extra_controller_params["catalog_facet.prefix"]
+      extra_controller_params.delete("catalog_facet.prefix") # in order to retrieve the a-z facet listing
+      extra_controller_params["catalog_facet.offset"]=0
+      extra_controller_params["catalog_facet.sort"]= "index"
+      solr_params = solr_facet_params(facet_field, extra_controller_params)
+      response = Blacklight.solr.find(solr_params)
+      a_to_z_facets = response.facets.select {|facet| facet.name.include?(Blacklight.config[:facet][:a_to_z][facet_field])}.first.items
+      a_to_z_paginator =  Blacklight::Solr::FacetPaginator.new(a_to_z_facets,
+        :prefix => prefix,
+        :offset => solr_params['facet.offset'],
+        :limit => limit,
+        :sort => response["responseHeader"]["params"]["f.#{facet_field}.facet.sort"] || response["responseHeader"]["params"]["facet.sort"]
+      )
+      return { facet_field => intended_paginator, Blacklight.config[:facet][:a_to_z][facet_field] => a_to_z_paginator }
+    else
+      return intended_paginator
+    end
+   
+  end
 
   protected
 
