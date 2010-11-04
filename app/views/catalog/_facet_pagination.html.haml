@@ -1,31 +1,40 @@
-%nav.prev_next_links
-
-	- if @pagination.has_previous? || @pagination.has_next?
-		- if @pagination.has_previous?
-			= link_to('« Previous', catalog_facet_path( @pagination.params_for_previous_url( params) ) , :class=>:prev_page)
+%nav.facet_more_a_to_z_navigation
+	%span.a_to_z_facet
+	- if a_to_z_pagination
+		- if pagination.prefix 
+			=link_to('All', catalog_facet_path(params))
 		- else
+			%b All
+		&nbsp;
+		- a_to_z_pagination.items.each do |item|
+			%span.a_to_z_facet
+				-if pagination.prefix and pagination.prefix.downcase.include? item.value
+					%b= item.value.upcase
+					%span.facet_number= item.hits
+				- else
+					= render_a_to_z_facet_value(Blacklight.config[:facet][:a_to_z][params["id"]], item)
+
+%nav.facet_more_navigation
+	- if pagination.has_previous? || pagination.has_next?
+		- if pagination.has_previous?
+			= link_to('« Previous', catalog_facet_path( pagination.params_for_previous_url( params) ), :class=>:prev_page)
+		- else		
 			%span.disabled.ui-state-active.prev_page « Previous
-		
-		- if @pagination.has_next?
-			= link_to('Next »', catalog_facet_path( @pagination.params_for_next_url(params)), :class => :next_page )
+	
+		- if pagination.has_next?
+			= link_to('Next »', catalog_facet_path( pagination.params_for_next_url(params)), :class => :next_page )
 		- else
 			%span.disabled.ui-state-active.next_page Next »
 		&nbsp;
-		
-	- if @pagination.sort == 'index'
-		[ Sort by:
-		%span.small 
-			%b A-Z
-		= link_to_unless(@pagination.sort == 'count', "Relevance", @pagination.params_for_resort_url('count', params), :class => "small sort_change numeric")
-		]
-	
-	- elsif @pagination.sort == 'count'
-		[ Sort by:
-		= link_to("A-Z", @pagination.params_for_resort_url('index', params), :class => "small sort_change az")
-		%span.small 
-			%b Relevance 
-		]
-	
-	&nbsp;
-	%span
-		= link_back_to_catalog :label=>"Back"
+	- if !pagination.prefix	
+		- if pagination.sort == 'index'
+			Sort by:
+			%span.small 
+				%b A-Z
+			= link_to_unless(pagination.sort == 'count', "Relevance", pagination.params_for_resort_url('count', params), :class => "small sort_change numeric")
+
+		- elsif pagination.sort == 'count'
+			Sort by:
+			= link_to("A-Z", pagination.params_for_resort_url('index', params), :class => "small sort_change az")
+			%span.small 
+				%b Relevance
