@@ -72,6 +72,12 @@ module ApplicationHelper
     facet_number_tag =  content_tag(:span, format_num(item.hits), :class => "facet_number")
     link_to_unless(options[:suppress_link], item.value, "/catalog"+ add_facet_params_and_redirect(facet_solr_field, item.value), :class=>"facet_select") + facet_number_tag
   end
+  
+  # helper method to render a-to-z navigation for faceting
+  def render_a_to_z_facet_value(facet_solr_field, item, options ={})
+    facet_number_tag =  content_tag(:span, format_num(item.hits), :class => "facet_number")
+    link_to_unless(options[:suppress_link], item.value.upcase, add_facet_params_and_redirect(facet_solr_field, item.value), :class=>"facet_select") + facet_number_tag
+  end
 
   # cf. Blacklight, remove facet from Dictionary Hash which preserves URL parameters ordering
   # for both the breadcrumb trail and the faceting area
@@ -124,9 +130,12 @@ module ApplicationHelper
     end
     new_params.delete(:id)
 
-    # Force action to be index. 
-    new_params[:action] = "index"
-    params_for_url (new_params[:q].empty? ? new_params[:f] :  new_params[:q].merge(new_params[:f]))
+    url = params_for_url (new_params[:q].empty? ? new_params[:f] :  new_params[:q].merge(new_params[:f]))
+    if field.include? Blacklight.config[:facet][:a_to_z][:common_key_name]
+      return url + "&catalog_facet.prefix=" + value
+    else
+      return url
+    end
   end
   
   # render orderly hidden facet fields in search form using Dictionary
