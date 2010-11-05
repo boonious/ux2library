@@ -103,6 +103,7 @@ Blacklight.configure(:shared) do |config|
       "mimetype_facet"      => 10,
       "language_facet"      => 10,
       "author_first_letter" => 26,
+      "subject_topic_first_letter" => 26,
     },
     :a_to_z => {
       :common_key_name  => "first_letter",
