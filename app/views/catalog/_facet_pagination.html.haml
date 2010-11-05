@@ -1,18 +1,25 @@
 %nav.facet_more_a_to_z_navigation
-	%span.a_to_z_facet
 	- if a_to_z_pagination
-		- if pagination.prefix 
-			=link_to('All', catalog_facet_path(params))
-		- else
-			%b All
-		&nbsp;
-		- a_to_z_pagination.items.each do |item|
+		- if pagination.prefix
 			%span.a_to_z_facet
-				-if pagination.prefix and pagination.prefix.downcase.include? item.value
-					%b= item.value.upcase
-					%span.facet_number= item.hits
+				=link_to('All', catalog_facet_path(params))
+		- else
+			%span.a_to_z_facet
+				%b All
+		&nbsp;
+		
+		- ("a".."z").each do |alphabet|
+			- paginator_alphabet = a_to_z_pagination.items.find { |item| item.value==alphabet }
+			- if paginator_alphabet
+				- if pagination.prefix and pagination.prefix.downcase.include? paginator_alphabet.value
+					%span.a_to_z_facet
+						%b= paginator_alphabet.value.upcase
+						%span.facet_number= paginator_alphabet.hits
 				- else
-					= render_a_to_z_facet_value(Blacklight.config[:facet][:a_to_z][params["id"]], item)
+					%span.a_to_z_facet
+						= render_a_to_z_facet_value(Blacklight.config[:facet][:a_to_z][params["id"]], paginator_alphabet)
+			- else
+				%span.a_to_z_facet.inactive= alphabet.upcase
 
 %nav.facet_more_navigation
 	- if pagination.has_previous? || pagination.has_next?
