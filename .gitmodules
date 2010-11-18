@@ -7,3 +7,6 @@
 [submodule "vendor/plugins/will_paginate"]
 	path = vendor/plugins/will_paginate
 	url = git@github.com:boonious/will_paginate.git
+[submodule "vendor/plugins/mobile-fu"]
+	path = vendor/plugins/mobile-fu
+	url = git://github.com/brendanlim/mobile-fu.git
