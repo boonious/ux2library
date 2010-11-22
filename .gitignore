@@ -20,3 +20,5 @@ app/stylesheets/surface_digital_library.css
 app/stylesheets/layout_digital_library.css
 app/stylesheets/.sass-cache/096751e40bb11b933e355a3b8a6f4f00182e89f7/_surface_mixin_and_properties.sassc
 app/stylesheets/.sass-cache/096751e40bb11b933e355a3b8a6f4f00182e89f7/_layout_mixin_and_properties.sassc
+public/stylesheets/layout_iphone.css
+public/stylesheets/surface_iphone.css
