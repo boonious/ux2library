@@ -5,6 +5,7 @@ require_dependency( 'vendor/plugins/blacklight/app/controllers/application_contr
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
+  has_mobile_fu
 
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password

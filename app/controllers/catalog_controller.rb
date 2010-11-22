@@ -31,6 +31,7 @@ class CatalogController < ApplicationController
 
     respond_to do |format|
       format.html { save_current_search_params }
+      format.mobile { save_current_search_params }
       format.rss  { render :layout => false }
       format.atom { render :layout => false }
     end
