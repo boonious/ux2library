@@ -16,55 +16,15 @@ body
 	z-index: 2
 
 #commons 
-	padding: 0
+	padding: 0 $baseline_grid_size
 
-.logo
-	+column(3)
-	margin-top: $baseline_grid_size
+// mobile digital library
 
-.project_title
-	+column(17)
-	height: $baseline_grid_size*6
-	margin-top: $baseline_grid_size
+.mobile_keyword_input_fieldset
+	text-align: center
 
-.jisc_logo 
-	+column(11)
-	+last
-	margin-top: $baseline_grid_size
-
-.col_left
-	+column(10)
-
-.col_right
-	+column(10)
-	+last
-
-.col_left, .col_right
-	header
-		img
-			+column(2.5)
-		section
-			+column(7)		
-	article, footer
-		+column(10)
-
-.sidebar 
-	+column(11)
-	+last
-
-
-footer
-	+column(31)
-
-.footer_info
-	+column(20)
-
-.footer_address 
-	+column(11)
-	+last
-
-.notice 
-	margin: 1em 4em 0 0
-	padding: $baseline_grid_size/2 40px
-	float: right 
-	width: 200px
+#mobile_sort_results
+	display: inline
+	float: right
+	margin-right: 0px
+	margin-top: -2*$baseline_grid_size

@@ -3,7 +3,7 @@
 
 body
 	+blueprint-typography(true)
-	background: url(../images/grid.png)
+	//background: url(../images/grid.png)
 	header.masthead
 		margin: 0
 		nav
@@ -29,20 +29,9 @@ input
 		style: solid
 		color: $quiet_color
 
-.project_title
-	h3:first-child
-		padding-top: $baseline_grid_size/2
-		color: $dark_highlight
-	h3
-		margin: 0 0 0 $baseline_grid_size/2
-		color: $loud_color
-
 h4
 	background: $bright_highlight
 	color: white
-
-.jisc_logo
-	padding-top: $baseline_grid_size
 
 .blog_listing
 	margin: $baseline_grid_size 0 0 0
@@ -85,7 +74,38 @@ footer
 
 .footer_address
 	text-align: left
-			
+
+// mobile digital library
+
+.mobile_keyword_input_fieldset
+	background-color: white
+	border: 3px solid $bright_highlight
+	height: 2 * $baseline_grid_size
+	padding-left: $baseline_grid_size / 4
+	-webkit-border-bottom-left-radius: $baseline_grid_size/2
+	-webkit-border-top-left-radius: $baseline_grid_size/2	
+	-webkit-border-bottom-right-radius: $baseline_grid_size/2	
+	-webkit-border-top-right-radius: $baseline_grid_size/2
+
+.mobile_text_input
+	background-color: white
+	border: none
+	width: 80%
+	float: left
+	-webkit-appearance: none
+
+.mobile_search_button
+	border: none
+	padding: 0
+	float: right
+	background-color: $bright_highlight
+	cursor: pointer
+	-webkit-border-bottom-left-radius: 0
+	-webkit-border-top-left-radius: 0
+
+.mobile_pagination
+	margin-top: $baseline_grid_size
+		
 //-- to be refactored
 
 #header_options, .cols-2
