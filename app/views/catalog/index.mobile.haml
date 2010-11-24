@@ -1,1 +1,13 @@
-= request.user_agent
+-if params[:q].blank? and params[:f].blank? and params[:search_field].blank?
+	-# if there are no input/search related params, display the "home" partial
+	= render 'home'
+-else
+	%section#commons
+		- @page_title = application_name + " Search Results"
+		= render :partial => 'search_form'
+		= render 'constraints_pagination', :localized_params=>params
+		
+		= render :partial=>'document_list'
+		
+		%nav.pagination
+			= will_paginate @response.docs, :container => false, :page_links => false

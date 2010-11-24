@@ -1,0 +1,11 @@
+>
+%span.appliedFilter.constraint{ :class => options[:classes]}
+	- unless value.blank?
+		%span.filterValue= options[:escape_value] ? link_to(h(value), options[:breadcrumb]) : link_to(value, options[:breadcrumb])
+	- unless label.blank?
+		%span.filterName
+			= options[:escape_label] ? "[" + h(label) + "]": "[" + label + "]"
+	- unless options[:remove].blank?
+		= link_to('x', options[:remove], :class=>'btnRemove imgReplace', :alt=>'remove')
+	- if options[:check]
+		= image_tag("checkmark.gif", :alt=>"", :plugin=>'blacklight')

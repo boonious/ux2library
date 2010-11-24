@@ -1,0 +1,9 @@
+%section#search.search
+	- form_tag catalog_index_path, :method => :get do
+		%fieldset.mobile_keyword_input_fieldset
+			= text_field_tag :q, params[:q], :class => "q mobile_text_input", :autocomplete => "off", :autocorrect => "off", :autocapitalize => "off", :placeholder => "Type in search words"
+			-#= label_tag(:search_field, " in ")
+			-#= select_tag(:search_field, options_for_select(search_fields, h(params[:search_field])), :title => "Targeted search options", :class=>"search_field")
+			= submit_tag 'search', :class=>'mobile_search_button', :src=>"/images/searchbutton.png", :type => "image"
+		= search_as_hidden_fields(:omit_keys => [:q, :search_field, :qt, :page])
+		-#=link_to "Start&nbsp;Over&thinsp;", catalog_index_path, :id=>"startOverLink", :class=>"small"
