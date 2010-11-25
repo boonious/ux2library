@@ -242,7 +242,7 @@ class CatalogController < ApplicationController
       @gdata_embeddability = REXML::XPath.first(gdata_doc, "//entry/gbs:embeddability")
       @gdata_viewability = REXML::XPath.first(gdata_doc, "//entry/gbs:viewability")
     end
-    @eulholding = parse_voyager_holding_details Nokogiri::HTML(open('http://catalogue.lib.ed.ac.uk/cgi-bin/Pwebrecon.cgi?DB=local&Search_Arg=isbn+'+@document[:isbn_t].last+'&Search_Code=CMD&CNT=25'))
+    #@eulholding = parse_voyager_holding_details Nokogiri::HTML(open('http://catalogue.lib.ed.ac.uk/cgi-bin/Pwebrecon.cgi?DB=local&Search_Arg=isbn+'+@document[:isbn_t].last+'&Search_Code=CMD&CNT=25'))
   end
 
 end
