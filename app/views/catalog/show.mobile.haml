@@ -1,0 +1,11 @@
+-@page_title = "#{document_show_html_title} - #{application_name}"
+%section#commons
+	%section{:id => "doc_"+ @document[:id].to_s }
+		= render_document_heading_mobile
+		-#%section.tools
+			-#= render :partial => 'show_tools'
+		%section.document
+			= render_document_partial @document, :show, :main
+
+%aside.sidebar
+	= render_document_partial @document, :show, :sidebar

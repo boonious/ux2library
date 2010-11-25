@@ -43,11 +43,12 @@ class CatalogController < ApplicationController
     if Blacklight.config[:data_augmentation][:enabled] 
       get_gdata_eulholding_details if @document[:isbn_t]
       @text_for_zemanta =  @gdata_description ?  @document[:opensearch_display].join(" ") + @gdata_description.text : @document[:opensearch_display].join(" ")
-      create_zemanta_suggestions @text_for_zemanta
+      create_zemanta_suggestions @text_for_zemanta if !is_device?("iphone")
     end
-    
+
     respond_to do |format|
       format.html {setup_next_and_previous_documents}
+      format.mobile { setup_next_and_previous_documents }
       # Add all dynamically added (such as by document extensions)
       # export formats.
       @document.export_formats.each_key do | format_name |
@@ -237,6 +238,8 @@ class CatalogController < ApplicationController
     if gdata_url_id
       gdata_id = gdata_url_id.text.split("/feeds/volumes/").last
       gdata_doc = gdata_client.get(Blacklight.config[:data_augmentation][:gdata][:endpoint_book_search] + '/' + gdata_id).to_xml
+      @isbn = @document[:isbn_t].last
+      @gdata_info_url =  REXML::XPath.first(gdata_doc, "//entry/link[@rel='http://schemas.google.com/books/2008/info']/@href")
       @gdata_image = REXML::XPath.first(gdata_doc, "//entry/link/@href")
       @gdata_description = REXML::XPath.first(gdata_doc, "//entry/dc:description")
       @gdata_embeddability = REXML::XPath.first(gdata_doc, "//entry/gbs:embeddability")

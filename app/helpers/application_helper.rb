@@ -57,6 +57,10 @@ module ApplicationHelper
   def render_document_heading
     '<h3>' + document_heading + '</h3>'
   end
+  
+  def render_document_heading_mobile
+     '<h5>' + document_heading + '</h5>'
+  end
 
   def render_document_partial(doc, action_name, mode)
     format = document_partial_name(doc)

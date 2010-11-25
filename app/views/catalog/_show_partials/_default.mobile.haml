@@ -1,0 +1,106 @@
+- if mode == :sidebar
+
+- else
+
+	/
+		- if @gdata_image and @gdata_image.to_s.include? "zoom"
+			%p.book_cover
+				%img{:src => @gdata_image.to_s.gsub("zoom=5","zoom=1") }
+	
+	- if document[:author_display]
+		%p
+			%b="By "
+			- number_of_authors = document[:author_display].split("■").size
+			- author_links(document[:author_display]).each_with_index do |author_link, index|
+				= author_link
+				- if index + 1 < number_of_authors
+					&#9632;
+	%p
+		%dl
+			- if document["date_display"]
+				%dt.mobile_common_label= "Date"
+				%dd.mobile_common_value= document["date_display"][0]
+			- elsif document["pub_date"]
+				%dt.mobile_common_label= "Date"
+				%dd.mobile_common_value= document["pub_date"][0]
+				
+			- document_show_fields.each do |solr_fname|
+				- if document[solr_fname] and !(solr_fname.include? "title" or solr_fname.include? "author")
+					- if document[solr_fname].is_a?(Array)
+						%dt.mobile_common_label= document_show_field_labels[solr_fname]
+						- if @gdata_image and @gdata_image.to_s.include? "zoom"
+							%dd.mobile_common_value
+								- number_of_items = document[solr_fname].size
+								- document[solr_fname].each_with_index do |val, index|
+									= link_to_new_facet_query(solr_fname, val)
+									- if index + 1 < number_of_items
+										&#9632;
+						- else
+							%dd.mobile_common_value
+								- number_of_items = document[solr_fname].size
+								- document[solr_fname].each_with_index do |val, index|
+									= link_to_new_facet_query(solr_fname, val)
+									- if index + 1 < number_of_items
+										&#9632;
+					- else
+						%dt.mobile_common_label= document_show_field_labels[solr_fname]
+						%dd.mobile_common_value= document[solr_fname]
+	
+	-#= render :partial=>'bookmark_control', :locals=>{:document=>document}
+	
+	- if !@gdata_embeddability
+		%section#mobile_custom_preview
+			- if document["pdf_display"]
+				- link = "http://docs.google.com/gview?embedded=true&url=" + document["pdf_display"][0]
+				%strong
+					= link_to "View PDF", link, :title => link
+				-#%iframe{:src=>link, :class=>"mobile_google_viewer", :frameborder=>"0"}
+			- elsif document["mspowerpoint_display"]
+				- link = "http://docs.google.com/gview?embedded=true&url=" + document["mspowerpoint_display"][0]
+				%strong
+					= link_to "View PowerPoint", link, :title => link
+				-#%iframe{:src=>link, :class=>"google_viewer", :frameborder=>"0"}
+			- elsif document["msword_display"]
+				- link = "http://docs.google.com/gview?embedded=true&url=" + document["msword_display"][0]
+				%strong
+					= link_to "View Word", link, :title => link
+				-#%iframe{:src=>link, :class=>"google_viewer", :frameborder=>"0"}
+				
+			-# if document["shockwave_display"]
+				-#%iframe{:src=>document["shockwave_display"][0], :class=>"google_viewer", :frameborder=>"0"}
+			- if document["mp3_display"]
+				%strong
+					= link_to "Listen to Audio", document["mp3_display"][0], :title => document["mp3_display"][0]
+				-#%iframe{:src=>document["mp3_display"][0], :class=>"google_viewer_audio", :frameborder=>"0"}
+
+	%script{:type=>"text/javascript", :src=>"http://books.google.com/books/previewlib.js"}
+	%script{:type=>"text/javascript"}
+		="GBS_insertPreviewButtonLink('ISBN:'+#{@isbn});"
+		
+	- if document["identifier_display"]
+		-if document["identifier_display"].to_s.include?("http")
+			%dl
+				%dt= "Links, Files"
+				%dd
+					%ul.mobile_files_list
+						- http_links = document["identifier_display"].select {|link| link.match(/^http/)}
+						- http_links.each_with_index do |link, index|
+							- link_text = link.size < 88 ? link : link[0..55] + "..." + link[-18..-1]
+							%li.small= link_to link_text, link, :title => link, :class => "document_list_link"
+									
+	- if @gdata_description
+		%p= @gdata_description.text
+	- elsif document["description_display"]
+		%p= document["description_display"][0]
+	
+	- if @eulholding
+		- if !@eulholding.empty?
+			%section#eulholding
+				%h5 Availability - Edinburgh University Library
+				%p
+					%ul
+						- @eulholding.each do |item|
+							%li
+								= item[:location] + ", " + item[:shelfmark] + " (shelfmark)"
+								%br
+								= item[:copies] + " item(s), " + item[:status]
