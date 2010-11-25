@@ -1,0 +1,37 @@
+!!!
+%meta{:charset=>"utf-8"}
+%meta{:name=>"description", :content=>"UX2.0: Usability and Contemporary User Experience in Digital Libraries"}
+%title=h(@page_title || application_name)
+%meta{:name=>"language", :content=>I18n.locale}
+%meta{'http-equiv'=>"content-style-type", :content=>"text/css"}
+%meta{'http-equiv'=>"content-type", :content=>"text/html; charset=utf-8"}
+%meta{:name=>"title", :content=>h(@page_title || application_name)}
+%meta{:name=>"keywords", :content=>"ux2, usability, user experience, digital libraries"}
+%meta{:name=>"author", :content=>"Boon Low"}
+%meta{:content=>"width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no", :name=>"viewport"}
+-#%meta{:content=>"yes", :name=>"apple-mobile-web-app-capable"}
+-#%meta{:content=>"black", :name=>"apple-mobile-web-app-status-bar-style"}
+-#%link{:rel=>"apple-touch-icon", :href=>"http://ux2.nesc.ed.ac.uk/images/projectLogoGreen.png"}
+
+- if is_device?("iphone")
+	%link{:rel=>"stylesheet", :href=>"/stylesheets/layout_iphone.css", :type=>"text/css"}
+	%link{:rel=>"stylesheet", :href=>"/stylesheets/surface_iphone.css", :type=>"text/css"}
+- else
+	%link{:rel=>"stylesheet", :href=>"/stylesheets/surface.css", :type=>"text/css"}
+	%link{:rel=>"stylesheet", :href=>"/stylesheets/layout.css", :type=>"text/css"}
+		
+%section#page
+	%header.masthead
+		%nav
+			%section#left_header_menu 
+				%ul
+					%li= link_back_to_catalog
+					-#%li= link_to 'Home', root_path
+					-#%li= link_to 'JISC UX2.0', 'http://ux2.nesc.ed.ac.uk'
+					-#%li= link_to "Search History", search_history_index_path
+			%section#right_header_menu
+				-#= render :partial=>'/user_util_links'
+		-#= render :partial=>'/flash_msg'
+	= yield
+	%footer
+		= @footer
