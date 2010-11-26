@@ -35,5 +35,6 @@
 				= render :partial=>'/user_util_links'
 		= render :partial=>'/flash_msg'
 	= yield
-	%footer
-		= @footer
+	%footer.main_footer
+		-#= @footer
+		= render :partial=>'footer'

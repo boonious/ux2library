@@ -1,0 +1,32 @@
+%section.footer_info
+	-if is_mobile_device?
+		%p
+			View this in:
+			- if session[:mobile_view]
+				%strong Mobile
+				|
+				= link_to "Classic", classic_catalog_path
+			- else
+				= link_to "Mobile", mobile_catalog_path
+				|
+				%strong Classic
+	%p
+		:markdown
+			This site is best viewed with modern browsers such as
+			[Chrome](http://www.google.com/chrome),
+			[Firefox](http://www.mozilla.com/firefox/)
+			and [Safari](http://www.apple.com/safari/).
+			Work is underway for other browsers compliance.
+			The site features the [digital library](http://library.nesc.ed.ac.uk)
+			prototype currently in development by the UX2 project and based on a range of open source systems: 
+			[Blacklight](https://github.com/projectblacklight/blacklight),
+			[Solr](http://lucene.apache.org/solr/).
+		-#[Fedora](http://www.fedora-commons.org/) &amp; [Orbeon Forms](http://www.orbeon.com/)
+			
+/
+	%section.footer_address
+		%address
+			:markdown
+				[e-Science&nbsp;Institute](http://www.esi.ac.uk/), 15 South College Street  
+				[the University of Edinburgh](http://www.ed.ac.uk), Edinburgh EH8 9AA, UK  
+				Tel: 0131 651 4783, Fax: 0131 650 9819

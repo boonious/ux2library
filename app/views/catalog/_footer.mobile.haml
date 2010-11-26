@@ -1,0 +1,11 @@
+%section
+	%p
+		View this in:
+		- if session[:mobile_view]
+			%strong Mobile
+			|
+			= link_to "Classic", classic_catalog_path
+		- else
+			= link_to "Mobile", mobile_catalog_path
+			|
+			%strong Classic		
