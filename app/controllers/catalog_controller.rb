@@ -43,7 +43,7 @@ class CatalogController < ApplicationController
     if Blacklight.config[:data_augmentation][:enabled] 
       get_gdata_eulholding_details if @document[:isbn_t]
       @text_for_zemanta =  @gdata_description ?  @document[:opensearch_display].join(" ") + @gdata_description.text : @document[:opensearch_display].join(" ")
-      create_zemanta_suggestions @text_for_zemanta if !is_device?("iphone")
+      create_zemanta_suggestions @text_for_zemanta unless is_mobile_device?
     end
 
     respond_to do |format|
