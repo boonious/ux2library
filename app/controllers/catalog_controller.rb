@@ -43,7 +43,7 @@ class CatalogController < ApplicationController
     if Blacklight.config[:data_augmentation][:enabled] 
       get_gdata_eulholding_details if @document[:isbn_t]
       @text_for_zemanta =  @gdata_description ?  @document[:opensearch_display].join(" ") + @gdata_description.text : @document[:opensearch_display].join(" ")
-      create_zemanta_suggestions @text_for_zemanta unless is_mobile_device?
+      create_zemanta_suggestions @text_for_zemanta unless is_mobile_device? and session[:mobile_view]
     end
 
     respond_to do |format|
@@ -57,6 +57,16 @@ class CatalogController < ApplicationController
         format.send(format_name.to_sym) { render :text => @document.export_as(format_name) }
       end
     end
+  end
+  
+  def classic
+    session[:mobile_view] = false
+    redirect_to request.referrer
+  end
+  
+  def mobile
+    session[:mobile_view] = true
+    redirect_to request.referrer
   end
   
   def facet_list_limit

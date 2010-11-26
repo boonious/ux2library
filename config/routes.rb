@@ -1,4 +1,14 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources(:catalog,
+    :only => [:index, :show, :update],
+    # /catalog/:id/image <- for ajax cover requests
+    # /catalog/:id/status
+    # /catalog/:id/availability
+    :member=>{:image=>:get, :status=>:get, :availability=>:get, :librarian_view=>:get},
+    # /catalog/map
+    :collection => {:map => :get, :opensearch=>:get, :citation=>:get, :email=>:get, :sms=>:get, :endnote=>:get, :send_email_record=>:post, :classic => :get, :mobile => :get}
+  )
+  
   Blacklight::Routes.build map
 
   # The priority is based upon order of creation: first created -> highest priority.
