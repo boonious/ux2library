@@ -88,11 +88,12 @@
 							- link_text = link.size < 88 ? link : link[0..55] + "..." + link[-18..-1]
 							%li.small= link_to link_text, link, :title => link, :class => "document_list_link"
 									
+
 	- if @gdata_description
 		%p= @gdata_description.text
 	- elsif document["description_display"]
 		%p= document["description_display"][0]
-	
+		
 	- if @eulholding
 		- if !@eulholding.empty?
 			%section#eulholding
@@ -101,6 +102,11 @@
 					%ul
 						- @eulholding.each do |item|
 							%li
-								= item[:location] + ", " + item[:shelfmark] + " (shelfmark)"
+								= item[:location] + ", " 
+								%strong= item[:shelfmark] 
+								" (shelfmark)"
 								%br
-								= item[:copies] + " item(s), " + item[:status]
+								= item[:copies] + " item(s)"
+								%ul
+									- item[:status].each do |copy|
+										%li= copy

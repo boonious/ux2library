@@ -197,15 +197,18 @@ class CatalogController < ApplicationController
   end
 
   def parse_voyager_holding_details(holding_details)
-    holding_details.xpath('//tr').collect { |node|
-      if !node.xpath('th/a').empty? and node.xpath('th/a').text=='Location (click for local info)'
-        {
-          :location => node.xpath('normalize-space(td)').gsub("STANDARD LOAN", "Standard Loan").gsub("SHORT LOAN", "Short Loan"),
-          :shelfmark => node.xpath('following-sibling::tr[th ="Shelfmark:"][1]/td').text.strip!,
-          :status => node.xpath('following-sibling::tr[th ="Status:"][1]/td').text.strip!.gsub("(Not Charged)","").downcase,
-          :copies => node.xpath('following-sibling::tr[th ="Number of Items:"][1]/td').text.strip!
-        }
-      end
+    holding_details.xpath('//div[@class="displayHoldings"]').collect { |node|
+      location_text = node.xpath('.//li[span="Location Information:"]/span[@class="subfieldData"]/a').text
+      shelfmark_text = node.xpath('.//li[span="Shelfmark:"]/span[@class="subfieldData"]/a').text
+      status_nodes = node.xpath('.//li[span="Status:"]/span[@class="subfieldData"]/text()')
+      status_text = status_nodes.collect {|status_node| status_node.text}
+      copies_text = node.xpath('.//li[span="Number of Items:"]/span[@class="subfieldData"]/text()')
+      {
+          :location => location_text.gsub("STANDARD LOAN", "Standard Loan").gsub("SHORT LOAN", "Short Loan"),
+          :shelfmark => shelfmark_text.strip!,
+          :status => status_text, #'status_text.strip!.gsub("(Not Charged)","").downcase'
+          :copies => copies_text.last.text().strip
+      }
     }.compact
   end
 
@@ -256,6 +259,8 @@ class CatalogController < ApplicationController
       @gdata_viewability = REXML::XPath.first(gdata_doc, "//entry/gbs:viewability")
     end
     #@eulholding = parse_voyager_holding_details Nokogiri::HTML(open('http://catalogue.lib.ed.ac.uk/cgi-bin/Pwebrecon.cgi?DB=local&Search_Arg=isbn+'+@document[:isbn_t].last+'&Search_Code=CMD&CNT=25'))
+    @eulholding = parse_voyager_holding_details Nokogiri::HTML(open('http://catalogue.lib.ed.ac.uk/vwebv/search?searchArg='+@document[:isbn_t].last+'&searchCode=GKEY%5E*&searchType=0'))
+    @euldetails = Nokogiri::HTML(open('http://catalogue.lib.ed.ac.uk/vwebv/search?searchArg='+@document[:isbn_t].last+'&searchCode=GKEY%5E*&searchType=0'))
   end
 
 end

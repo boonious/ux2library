@@ -27,6 +27,7 @@
 						%span.facet_number=article.xpath("url").text.gsub("http://", "").gsub("https://", "").split('/')[0].gsub("www.","")
 
 - else
+
 	- if @gdata_image and @gdata_image.to_s.include? "zoom"
 		%p.book_cover
 			%img{:src => @gdata_image.to_s.gsub("zoom=5","zoom=1") }
@@ -96,9 +97,14 @@
 					%ul
 						- @eulholding.each do |item|
 							%li
-								= item[:location] + ", " + item[:shelfmark] + " (shelfmark)"
+								= item[:location] + ", " 
+								%strong= item[:shelfmark] 
+								" (shelfmark)"
 								%br
-								= item[:copies] + " item(s), " + item[:status]
+								= item[:copies] + " item(s)"
+								%ul
+									- item[:status].each do |copy|
+										%li= copy
 	
 	- if !@gdata_embeddability
 		%section#custom_preview
