@@ -30,14 +30,17 @@
 					- if params[:q] or params[:f]
 						%li= link_to 'Refine', refine_catalog_path({:q=>params[:q], :f=>params[:f]})
 					- if current_user
-						%li= link_to image_tag("favorites.png", :border=>0), bookmarks_path
+						%li
+							= link_to image_tag("favorites.png", :border=>0), bookmarks_path
+							-if !current_user.bookmarked_document_ids.empty?
+								=current_user.bookmarked_document_ids.size
 						-#%li= link_to "Saved Searches", saved_searches_path
 					-#%li= 'JISC UX2.0', 'http://ux2.nesc.ed.ac.uk'
 					-#%li= link_to 'Library', root_path
 					-#%li= link_to "History", search_history_index_path
 			%section#right_header_menu
 				= render :partial=>'/user_util_links'
-		-#= render :partial=>'/flash_msg'
+	-#= render :partial=>'/flash_msg'
 	= yield
 	%footer.mobile_main_footer
 		-#= @footer
