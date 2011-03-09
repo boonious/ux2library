@@ -1,0 +1,26 @@
+%section#commons
+	%section
+		%h5 Bookmarks 
+	
+		- form_for @bookmark, :url => bookmark_path do |f|
+			
+			%fieldset
+				%p
+					= f.label :title
+					%br
+					= f.text_field :title
+				/
+					%p	
+						= f.label :tags
+						%br
+						= f.text_field :tag_list
+				
+				%p
+					= f.label :notes
+					%br
+					= f.text_area :notes
+				
+				%p.clear
+					= submit_tag "Save changes", :class => "button", :redirect_to=>"/"
+					= f.label '', link_to('Cancel', collection_path)
+					
