@@ -84,11 +84,6 @@
 	
 	= render :partial=>'bookmark_control', :locals=>{:document=>document}
 	
-	- if @gdata_description
-		%p= @gdata_description.text
-	- elsif document["description_display"]
-		%p= document["description_display"][0]
-	
 	- if @eulholding
 		- if !@eulholding.empty?
 			%section#eulholding
@@ -105,6 +100,11 @@
 								%ul
 									- item[:status].each do |copy|
 										%li= copy
+	
+	- if @gdata_description
+		%p= @gdata_description.text
+	- elsif document["description_display"]
+		%p= document["description_display"][0]
 	
 	- if !@gdata_embeddability
 		%section#custom_preview
