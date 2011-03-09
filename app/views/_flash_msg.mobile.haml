@@ -1,0 +1,7 @@
+- if flash_notice = flash[:notice]
+	%section.ui-corner-all.notice
+		= flash_notice
+	
+- if flash_error = flash[:error]
+	%section.ui-state-error.ui-corner-all.error
+		= flash_error
