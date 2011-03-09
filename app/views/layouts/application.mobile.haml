@@ -29,6 +29,9 @@
 					%li= link_to 'Home', root_path
 					- if params[:q] or params[:f]
 						%li= link_to 'Refine', refine_catalog_path({:q=>params[:q], :f=>params[:f]})
+					- if current_user
+						%li= link_to 'Bookmarks', bookmarks_path
+						-#%li= link_to "Saved Searches", saved_searches_path
 					-#%li= 'JISC UX2.0', 'http://ux2.nesc.ed.ac.uk'
 					-#%li= link_to 'Library', root_path
 					-#%li= link_to "History", search_history_index_path
