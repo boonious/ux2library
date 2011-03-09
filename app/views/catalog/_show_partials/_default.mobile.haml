@@ -46,8 +46,9 @@
 						%dt.mobile_common_label= document_show_field_labels[solr_fname]
 						%dd.mobile_common_value= document[solr_fname]
 	
-	-#= render :partial=>'bookmark_control', :locals=>{:document=>document}
-	
+	= render :partial=>'bookmark_control', :locals=>{:document=>document}
+	= render :partial=>'/flash_msg'
+
 	- if !@gdata_embeddability
 		%section#mobile_custom_preview
 			- if document["pdf_display"]

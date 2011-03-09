@@ -5,6 +5,8 @@
 	%section#commons
 		- @page_title = application_name + " Search Results"
 		= render :partial => 'search_form'
+		= render :partial=>'/flash_msg'
+		
 		= render 'constraints_pagination', :localized_params=>params
 		
 		= render :partial=>'document_list'
