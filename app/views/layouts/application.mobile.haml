@@ -33,10 +33,10 @@
 					-#%li= link_to 'Library', root_path
 					-#%li= link_to "History", search_history_index_path
 			%section#right_header_menu
-				-#= render :partial=>'/user_util_links'
+				= render :partial=>'/user_util_links'
 		-#= render :partial=>'/flash_msg'
 	= yield
 	%footer.mobile_main_footer
 		-#= @footer
-		= render :partial=>'footer'
+		-#= render :partial=>'footer'
 			
