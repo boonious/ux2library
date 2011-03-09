@@ -27,10 +27,12 @@
 			%section#left_header_menu 
 				%ul
 					%li= link_to 'Home', root_path
-					-#%li= link_to 'JISC UX2.0', 'http://ux2.nesc.ed.ac.uk'
+					- if params[:q] or params[:f]
+						%li= link_to 'Refine', refine_catalog_path(params)
+					-#%li= 'JISC UX2.0', 'http://ux2.nesc.ed.ac.uk'
 					-#%li= link_to 'Library', root_path
 					-#%li= link_to "History", search_history_index_path
-			-#%section#right_header_menu
+			%section#right_header_menu
 				-#= render :partial=>'/user_util_links'
 		-#= render :partial=>'/flash_msg'
 	= yield

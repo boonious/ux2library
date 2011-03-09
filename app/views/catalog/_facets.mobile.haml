@@ -1,0 +1,3 @@
+= render 'constraints_refine', :localized_params=>params
+- facet_field_names.each do |solr_fname|
+	= render_facet_limit(solr_fname)

@@ -1,0 +1,10 @@
+%section#commons
+	%section#facet_listing	
+		%h5= facet_field_labels[params[:id]]
+		
+		-if @pagination.is_a? Hash
+			=render :partial=>'facet_pagination', :locals=>{:pagination => @pagination[params["id"]], :a_to_z_pagination=>@pagination[Blacklight.config[:facet][:a_to_z][params["id"]]]}
+			=render :partial=>'facet_listing', :locals=>{:item_groups=>@pagination[params["id"]].items.in_groups_of(20)}
+		-else
+			=render :partial=>'facet_pagination', :locals=>{:pagination => @pagination, :a_to_z_pagination=>nil}
+			=render :partial=>'facet_listing', :locals=>{:item_groups=>@pagination.items.in_groups_of(20)}

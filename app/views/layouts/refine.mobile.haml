@@ -25,7 +25,7 @@
 		%nav
 			%section#left_header_menu 
 				%ul
-					%li= link_back_to_catalog :label=>"Back"
+					%li= link_to_function "Back", "history.back()"
 					-#%li= link_to 'Home', root_path
 					-#%li= link_to 'JISC UX2.0', 'http://ux2.nesc.ed.ac.uk'
 					-#%li= link_to "Search History", search_history_index_path

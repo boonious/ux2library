@@ -69,6 +69,12 @@ class CatalogController < ApplicationController
     redirect_to request.referrer
   end
   
+  def refine
+    (@response, @document_list) = get_search_results
+    @filters = params[:f] || []
+    render :layout => 'item'
+  end
+  
   def facet_list_limit
     if params[:id].include? "pub_date" 
       170
@@ -84,6 +90,16 @@ class CatalogController < ApplicationController
       params.merge!({:"catalog_facet.sort"=>"index"}) # a-z sort for the time being
     end
     @pagination = get_facet_pagination(params[:id], params)
+  end
+  
+  def facet_mobile
+    if !params.has_key?("catalog_facet.sort") and (params[:id].include? "pub_date" or params[:id].include? "format" or params[:id].include? "mimetype_facet")
+       params.merge!({:"catalog_facet.sort"=>"index"})
+    elsif !params.has_key?("catalog_facet.sort") and (params[:id].include? "author_facet" or params[:id].include? "subject_topic_facet")
+      params.merge!({:"catalog_facet.sort"=>"index"}) # a-z sort for the time being
+    end
+    @pagination = get_facet_pagination(params[:id], params)
+    render 'facet', :layout => 'refine'
   end
   
   # Blacklight solr_helper method override for a,b,..z alphabetic

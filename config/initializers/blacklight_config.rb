@@ -225,7 +225,7 @@ Blacklight.configure(:shared) do |config|
     },
     :zemanta => {
       :endpoint => 'http://api.zemanta.com/services/rest/0.0/',
-      :developer_key => ''
+      :developer_key => 'c9e66y95zpx248rhng6r52ny'
     }
   }
 end

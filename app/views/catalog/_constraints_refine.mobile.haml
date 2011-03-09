@@ -1,0 +1,12 @@
+-# cf. Blacklight, instead using 'params' directly, make use of the 'params_for_ui' helper
+-# which preserves the order of key-value pairs in request URL - in preparation for
+-# breadcrumb navigation. NOTE: for faceting breadcrumb only (no keyword search)
+
+-if !params_for_ui[:q].empty?	
+	%p
+		%strong= "Keywords "
+		= params[:q]
+-if !params_for_ui[:f].empty?	
+	%p
+		%strong= "Scope "
+		= render_constraints_filters(params_for_ui)

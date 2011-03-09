@@ -6,7 +6,7 @@ ActionController::Routing::Routes.draw do |map|
     # /catalog/:id/availability
     :member=>{:image=>:get, :status=>:get, :availability=>:get, :librarian_view=>:get},
     # /catalog/map
-    :collection => {:map => :get, :opensearch=>:get, :citation=>:get, :email=>:get, :sms=>:get, :endnote=>:get, :send_email_record=>:post, :classic => :get, :mobile => :get}
+    :collection => {:map => :get, :opensearch=>:get, :citation=>:get, :email=>:get, :sms=>:get, :endnote=>:get, :send_email_record=>:post, :classic => :get, :mobile => :get, :refine =>:get}
   )
   
   Blacklight::Routes.build map
