@@ -2,7 +2,7 @@
 	%span.small
 		This item is in your
 		= link_to 'bookmarks', bookmarks_path
--elsif current_user
+-else
 	- @bookmark ||= Bookmark.new
 	- form_for(@bookmark) do |f|
 		= f.hidden_field(:document_id, :value => h(document[:id]))
